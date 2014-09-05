@@ -1,16 +1,11 @@
-﻿Feature added in this version (v1.0)
+﻿Feature added in this version (v1.1)
 ====================================
 1. Components
-	1.1 Basic form fields
-	1.2 Grid panel (ngGrid)
-	1.3 Chart panel (Chart.Js)
-	1.4 Map panel (Leaflet)
-	1.5 Tabpanel
+	N/A
 
 2. Functionalities
-	2.1 Dynamically loading controller and templates
-	2.2 Build view from meta / load from static template
-	2.3 Generic way of handling events and REST actions
+	2.1 Load templates from custom path (default will be /lib/ngViewBuilder/tpl)
+	2.2 Reorganized folders and files
 
 /****************************************************************************************************************************************************************/
 List of open sources we use

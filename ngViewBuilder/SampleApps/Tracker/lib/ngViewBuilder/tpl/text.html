@@ -1,0 +1,15 @@
+﻿<div class="form-group">
+    <label class="col-sm-3 control-label {{lblcls}}">{{label}}</label>
+    <div class="col-sm-9">
+        <input class="form-control field-{{type}}"
+               type="{{type}}"
+               id="{{name}}"
+               name="{{name}}"
+               ng-model="model.{{dataPath}}"
+               ng-change="{{handle}}($event, '{{name}}', '{{formName}}', 'change');"
+               ng-focus="{{handle}}($event, '{{name}}', '{{formName}}', 'focus');"
+               ng-blur="{{handle}}($event, '{{name}}', '{{formName}}', 'blur');">
+
+        <p class="help-block">{{help}}</p>
+    </div>
+</div>

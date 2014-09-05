@@ -1,16 +1,10 @@
-﻿Feature added in this version (v1.0)
+﻿Feature added in this version (v1.2)
 ====================================
 1. Components
-	1.1 Basic form fields
-	1.2 Grid panel (ngGrid)
-	1.3 Chart panel (Chart.Js)
-	1.4 Map panel (Leaflet)
-	1.5 Tabpanel
+	1.1 Highcharts
 
 2. Functionalities
-	2.1 Dynamically loading controller and templates
-	2.2 Build view from meta / load from static template
-	2.3 Generic way of handling events and REST actions
+	2.1 before and after rendering callbacks
 
 /****************************************************************************************************************************************************************/
 List of open sources we use
@@ -28,6 +22,9 @@ List of open sources we use
 	4.1 Chart.js and Angles
 		http://www.chartjs.org
 		https://github.com/lgsilver/angles
+	4.2 Highcharts and highcharts-ng
+		http://www.highcharts.com/
+		https://github.com/pablojim/highcharts-ng
 5. Leaflet and angular--leaflet-directiv
 	http://leafletjs.com/
 	http://tombatossals.github.io/angular-leaflet-directive/
