@@ -1,8 +1,10 @@
-﻿<div class="chart-container chart-{{name}}"
-     id="{{id}}"
-     name="{{name}}"
-     style="margin: 5px; min-height:{{config.height}}px; min-width={{config.width}}px;"
-     highchart=""
-     options="$schema.config.{{name}}"
-     data="model.{{dataPath}}">
+﻿<div class="highchart-container highchart-{{name}}" id="container-{{name}}" name="container-{{name}}" style="margin:5px;">
+    <highchart class="highchart-{{name}}"
+               id="{{id}}"
+               name="{{name}}"
+               height= "100px"
+               width= "200px"
+               style="margin: 5px; min-height:{{config.height}}; min-width={{config.width}};"
+               config="$schema.config.{{name}}">
+    </highchart>
 </div>

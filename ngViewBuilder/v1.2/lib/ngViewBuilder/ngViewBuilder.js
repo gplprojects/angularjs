@@ -53,6 +53,42 @@ angular.module('ngViewBuilder', [])
         switch(controlType){
             case "ng-gid":
                 break;
+            
+            /*case "highcharts":
+            case "highchart":
+                return {
+                    "options": {
+                        "chart": {
+                            "type": "areaspline"
+                        },
+                        "plotOptions": {
+                            "series": {
+                                "stacking": ""
+                            }
+                        }
+                    },
+                    "series": [
+                      {
+                          "name": "Some data",
+                          "data": [
+                            1,
+                            2,
+                            4,
+                            7,
+                            3
+                          ],
+                          "id": "series-0",
+                          "type": "column"
+                      }
+                    ],
+                    "title": {
+                        "text": "Hello"
+                    },
+                    "credits": {
+                        "enabled": true
+                    },
+                    "loading": false
+                };*/
             case "chartjs":
                 return {
                     // Boolean - Whether to animate the chart
@@ -440,7 +476,7 @@ angular.module('ngViewBuilder', [])
 
             case "chartpanel":
                 
-                scope.$schema.config[control.name] = defaultConfig; //Overwrite user config, To Do: Merging user and default config
+                scope.$schema.config[control.name] = defaultConfig || scope.$schema.config[control.name]; //Overwrite user config, To Do: Merging user and default config
 
                 control.config.height = control.config.height || '98%';
                 control.config.width = control.config.width || '98%';

@@ -128,13 +128,43 @@
                             type: 'panel',
                             title: 'Chart using Highcharts',
                             children: {
-                                samplechart1: {
+                                highchart: {
                                     type: 'chartpanel',
                                     controltype: 'highchart',
                                     template: 'highchart',
                                     model: 'samplechart',
                                     config: {
-                                        type: 'Doughnut'
+                                        "options": {
+                                            "chart": {
+                                                "type": "areaspline"
+                                            },
+                                            "plotOptions": {
+                                                "series": {
+                                                    "stacking": ""
+                                                }
+                                            }
+                                        },
+                                        "series": [
+                                          {
+                                              "name": "Some data",
+                                              "data": [
+                                                1,
+                                                2,
+                                                4,
+                                                7,
+                                                3
+                                              ],
+                                              "id": "series-0",
+                                              "type": "column"
+                                          }
+                                        ],
+                                        "title": {
+                                            "text": "Hello"
+                                        },
+                                        "credits": {
+                                            "enabled": true
+                                        },
+                                        "loading": false
                                     }
                                 }
                             }

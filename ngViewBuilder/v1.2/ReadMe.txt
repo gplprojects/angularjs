@@ -1,7 +1,7 @@
 ﻿Feature added in this version (v1.2)
 ====================================
 1. Components
-	1.1 Highcharts
+	1.1 Highcharts (highcharts-ng)
 
 2. Functionalities
 	2.1 before and after rendering callbacks
