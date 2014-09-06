@@ -18,6 +18,7 @@ angular.module('ngViewBuilder', [])
         $ngViewUtility.getTemplateByType('radio'),
         $ngViewUtility.getTemplateByType('ng-grid'),
         $ngViewUtility.getTemplateByType('chartjs'),
+        $ngViewUtility.getTemplateByType('highchart'),
         $ngViewUtility.getTemplateByType('leaflet'),
         $ngViewUtility.getTemplateByType('tabpanel')
     ]).then(function (data) {
@@ -232,9 +233,9 @@ angular.module('ngViewBuilder', [])
         }
 
         var defer = $q.defer();
-        require([uri], function () {
+        require(angular.isArray(uri) ? uri : [uri], function () {
             if (!controllerName)
-                urcontrollerNamei = viewName + 'Controller';
+                controllerName = viewName + 'Controller';
 
             //Get controller prototype
             var controller = (window[controllerName]);
@@ -439,9 +440,9 @@ angular.module('ngViewBuilder', [])
      */
     function buildPanel(scope, control, key, parentEl, dataPath, isCallback, model, isCallback) {
 
-        var template = '<div id="{{id}}" name="{{name}}"></div>';
+        var template = control.content || '<div id="{{id}}" name="{{name}}"></div>';
 
-        if (control.template || control.type) {
+        if (!control.content && (control.template || control.type)) {
             template = $ngViewUtility.getTemplateFromCache(control.template || control.type);
             if (!template) {
                 if (!isCallback) {
@@ -477,9 +478,9 @@ angular.module('ngViewBuilder', [])
             case "chartpanel":
                 
                 scope.$schema.config[control.name] = defaultConfig || scope.$schema.config[control.name]; //Overwrite user config, To Do: Merging user and default config
-
-                control.config.height = control.config.height || '98%';
-                control.config.width = control.config.width || '98%';
+                console.log(scope.$schema.config[control.name]);
+                //control.config.height = control.config.height || '98%';
+                //control.config.width = control.config.width || '98%';
                 break;
 
             case "mappanel":
@@ -514,7 +515,7 @@ angular.module('ngViewBuilder', [])
         if (typeof scope.afterRender === 'function')
             scope.afterRender(control.id, control, panelEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
 
-        if (control.children) {
+        if (!control.content && control.children) {
             angular.forEach(control.children, function (childObject, childName) {
                 buildControlByType(scope, childObject, childName, (panelEl.attr('id') !== control.id ? angular.element('#' + control.id, panelEl) : panelEl), dataPath, model);
             });

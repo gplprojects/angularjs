@@ -128,7 +128,7 @@
                             type: 'panel',
                             title: 'Chart using Highcharts',
                             children: {
-                                highchart: {
+                                highchart1: {
                                     type: 'chartpanel',
                                     controltype: 'highchart',
                                     template: 'highchart',
@@ -180,12 +180,12 @@
                                     },
                                     {
                                         id: 'tab-2',
-                                        title: 'User defined TemplateURL',
-                                        contentURL: 'mytemplate.html', //type: 'dynamic' / 'template'
+                                        title: 'Template Content',
+                                        contentURL: 'views/tpl/statichighchart.html', //type: 'dynamic' / 'template'
                                     },
                                     {
                                         id: 'tab-3',
-                                        title: 'Default TemplateURL', //type: 'dynamic' / 'template'
+                                        title: 'Dynamic Content', //type: 'dynamic' / 'template'
                                         children: {
                                             _name: {
                                                 type: 'text',

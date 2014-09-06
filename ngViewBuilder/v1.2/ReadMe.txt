@@ -5,6 +5,12 @@
 
 2. Functionalities
 	2.1 before and after rendering callbacks
+	2.2 Loaded external lib using requirejs
+	2.3 Extended controller loader to load javascript partials
+		Example:
+		$ngViewLoader.load('<viewName>', 'viewController', '<viewControllerName>', <skipDynamicRendering>) or
+		$ngViewLoader.load('<viewName>', ['viewController', 'partialController'], '<viewControllerName>', <skipDynamicRendering>)
+	2.4 set panel static conent with in meta data (This will skip rendering children) 
 
 /****************************************************************************************************************************************************************/
 List of open sources we use

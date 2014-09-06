@@ -2,7 +2,7 @@
  * Define your appname and will be used as you app.
  * Note: Any changes you do here will have impact on your app, so please do change in ng-app attribute to make your app run soomthly.
  */
-window.appName = "angBuilder";
+window.appName = "sampleApp";
 
 /**
  * Setting up angular application and list of dependency modules 
@@ -13,7 +13,14 @@ window.appName = "angBuilder";
  * @leaflet-directive - Angular directive for leaflet
  * @ui.bootstrap - Angular ported bootstrap 
  */
-window[appName] = angular.module(appName, ['ui.router', 'ngViewBuilder', 'ngGrid', 'angles', 'leaflet-directive', 'ui.bootstrap']);
+window[appName] = angular.module(appName, ['ui.router',
+                                           'ngViewBuilder',
+                                           'ngGrid',
+                                           'angles',
+                                           'leaflet-directive',
+                                           'ui.bootstrap',
+                                           'highcharts-ng'
+                                          ]);
 
 /**
  * Define some of usefull provider to work with lazy loading

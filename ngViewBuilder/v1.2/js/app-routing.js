@@ -29,7 +29,7 @@ window[appName].config(['$stateProvider', '$urlRouterProvider', function ($state
 		    controller: 'listController',
 		    resolve: {
 		        load: ['$ngViewLoader', function ($ngViewLoader) {
-		            return $ngViewLoader.load('list', '../js/controllers/list', 'listController');
+		            return $ngViewLoader.load('list', ['../js/controllers/list', '../js/controllers/list-tab-highchart'], 'listController');
 		        }]
 		    }
 		})
