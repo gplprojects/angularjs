@@ -476,11 +476,12 @@ angular.module('ngViewBuilder', [])
                     break
 
             case "chartpanel":
+
+                if (defaultConfig)
+                    scope.$schema.config[control.name] = angular.extend(defaultConfig, scope.$schema.config[control.name]);
                 
-                scope.$schema.config[control.name] = defaultConfig || scope.$schema.config[control.name]; //Overwrite user config, To Do: Merging user and default config
-                console.log(scope.$schema.config[control.name]);
-                //control.config.height = control.config.height || '98%';
-                //control.config.width = control.config.width || '98%';
+                control.config.height = control.config.height || '98%';
+                control.config.width = control.config.width || '98%';
                 break;
 
             case "mappanel":

@@ -2,7 +2,7 @@
  * Define your appname and will be used as you app.
  * Note: Any changes you do here will have impact on your app, so please do change in ng-app attribute to make your app run soomthly.
  */
-window.appName = "sampleApp";
+window.appName = "angularApp";
 
 /**
  * Setting up angular application and list of dependency modules 
@@ -20,7 +20,7 @@ window[appName] = angular.module(appName, ['ui.router',
                                            'leaflet-directive',
                                            'ui.bootstrap',
                                            'highcharts-ng'
-                                          ]);
+]);
 
 /**
  * Define some of usefull provider to work with lazy loading
@@ -49,7 +49,7 @@ window[appName].controller('applicationController', ['$rootScope', '$scope', '$h
         date: 'Jul 2014',
         view: 'Root'
     };
-    
+
     /*************************************************** Handle screen initialization and build view *************************************************/
     /**
     * Base API which will gets view meta info. from backend
@@ -70,35 +70,79 @@ window[appName].controller('applicationController', ['$rootScope', '$scope', '$h
         $ngViewBuilder.build(scope);
 
         var end = new Date();
-        console.log("Total time taken to render view '" + (scope.$schema.$metainfo.view) + "' is '" + (end.getTime() - start.getTime()) +" ms'");
+        console.log("Total time taken to render view '" + (scope.$schema.$metainfo.view) + "' is '" + (end.getTime() - start.getTime()) + " ms'");
     }
-    
+
+    /************************************************************ Handle DOM actions ****************************************************************/
+    $scope.$doPefromAction = function ($event, elementName, scope) {
+
+        if (!scope && !$event)
+            return;
+
+        if (!scope && $event) {
+            scope = angular.element($event.target).scope()
+        }
+
+        if (!scope)
+            scope = $scope;
+
+        if (scope.$schema.config[elementName]) {
+
+            angular.forEach(scope.$schema.config[elementName].actions, function (action, actionName) {
+
+                console.log("Performing action - " + actionName);
+
+                var options = {
+                    el: elementName,
+                    eventType: $event.type,
+                    action: scope.$schema.$metainfo.view + "/" + actionName,
+                    type: action.type,
+                    data: req,
+                    onComplete: function (data, ops, hasError) {
+                        scope.doParseResponse(data, ops, hasError);
+                    }
+                };
+
+                var req = scope.doPrepareRequest(options);
+                if (req === false)
+                    return;
+
+                scope.$doAction(options);
+            });
+        }
+    }
+
     /************************************************************ Handle REST actions ****************************************************************/
-    $scope.interceptRequest = function (restAction, actionType, data, successCallback, errorCallback) {
-        return data;
+    $scope.$interceptRequest = function (options) {
+        return options.data;
     }
 
-    $scope.doHttpAction = function (restAction, actionType, data, successCallback, errorCallback) {
+    $scope.$doAction = function (options) {
+        $scope.$doHttpAction(options);
+    }
 
-        $scope.interceptRequest(restAction, actionType, data);
+    $scope.$doHttpAction = function (options) {
 
-        if (actionType === 'get') {
+        options.data = $scope.$interceptRequest(options);
+
+        if (options.type === 'get') {
             $http({
-                url: 'app/' + restAction,
-                method: (actionType || "GET")
+                url: 'app/' + options.action,
+                method: (options.type || "GET")
             })
-            .success(function (data) { interceptResponse(data, successCallback); })
-            .error(function (data) { interceptResponse(data, errorCallback); });
+            .success(function (data) { $scope.$interceptResponse(data, options, false); })
+            .error(function (data) { $scope.$interceptResponse(data, options, true); });
         }
         else {
-            $http.post('app/' + restAction, data)
-                .success(interceptResponse)
-                .error(interceptResponse);
+            $http.post('app/' + options.action, options.data)
+                .success(function (data) { $scope.$interceptResponse(data, options, false); })
+                .error(function (data) { $scope.$interceptResponse(data, options, true); });
         }
     }
 
-    $scope.interceptResponse = function (data, callback) {
-        callback(data);
+    $scope.$interceptResponse = function (data, options, hasError) {
+        if (options[hasError ? 'onSuccess' : 'onError'])
+            options[hasError ? 'onSuccess' : 'onError'](data, options, hasError);
     }
     /**
     * Destroy scope and leaky objects

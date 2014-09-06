@@ -11,6 +11,7 @@
 		$ngViewLoader.load('<viewName>', 'viewController', '<viewControllerName>', <skipDynamicRendering>) or
 		$ngViewLoader.load('<viewName>', ['viewController', 'partialController'], '<viewControllerName>', <skipDynamicRendering>)
 	2.4 set panel static conent with in meta data (This will skip rendering children) 
+	2.5 Moved button handler to base (app.js). Only prepareRequest and processResponse will be in view scope.
 
 /****************************************************************************************************************************************************************/
 List of open sources we use

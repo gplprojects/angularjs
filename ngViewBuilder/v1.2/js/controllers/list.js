@@ -32,31 +32,17 @@
         console.log($scope.model);
     }
     
-    $scope.doPerform = function ($event, elementName) {
-
-        if ($scope.$schema.config[elementName]) {
-
-            angular.forEach($scope.$schema.config[elementName].actions, function (action, actionName) {
-
-                console.log("Performing action - " + actionName);
-
-                var req = $scope.doPrepareRequest(elementName, actionName, action);
-
-                $scope.doHttpAction($scope.$schema.$metainfo.view + "/" + actionName, action.type, req, function (data) {
-                    $scope.doParseResponse(data, elementName, action);
-                });
-            });
-        }
-    }
-
-    $scope.doPrepareRequest = function (elementName, action) {
+    $scope.doPrepareRequest = function (options) {
         //Prepare request
 
         return $scope.model;
     }
 
-    $scope.doParseResponse = function (data, elementName, action) {
+    $scope.doParseResponse = function (data, options, hasError) {
         //Parse response
+        if (hasError)
+            return;
+
         $scope.model = data;
     }
 
