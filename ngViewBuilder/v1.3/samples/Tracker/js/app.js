@@ -66,6 +66,8 @@ window[appName].controller('applicationController', ['$rootScope', '$scope', '$h
 
         var end = new Date();
         console.log("Total time taken to render view '" + (scope.$schema.$metainfo.view) + "' is '" + (end.getTime() - start.getTime()) + " ms'");
+
+        if (scope.initModule) scope.initModule();
     }
 
     /************************************************************ Handle DOM actions ****************************************************************/

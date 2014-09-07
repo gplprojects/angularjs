@@ -29,7 +29,7 @@ List of open sources we use
 	http://leafletjs.com/
 	http://tombatossals.github.io/angular-leaflet-directive/
 6. Bootstrap for Angular
-	http://angular-ui.github.io/bootstrap/#/tabs
+	http://angular-ui.github.io/bootstrap/
 
 Note:
 ** Included in the project and not using

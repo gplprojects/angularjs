@@ -9,18 +9,18 @@ angular.module('ngViewBuilder', [])
 .run(['$q', '$ngViewUtility', function ($q, $ngViewUtility) {
 
     $q.all([
-        $ngViewUtility.getTemplateByType('form'),
-        $ngViewUtility.getTemplateByType('panel'),
-        $ngViewUtility.getTemplateByType('button'),
-        $ngViewUtility.getTemplateByType('text'),
-        $ngViewUtility.getTemplateByType('select'),
-        $ngViewUtility.getTemplateByType('checkbox'),
-        $ngViewUtility.getTemplateByType('radio'),
-        $ngViewUtility.getTemplateByType('ng-grid'),
-        $ngViewUtility.getTemplateByType('chartjs'),
-        $ngViewUtility.getTemplateByType('highchart'),
-        $ngViewUtility.getTemplateByType('leaflet'),
-        $ngViewUtility.getTemplateByType('tabpanel')
+        $ngViewUtility.getTemplate('form'),
+        $ngViewUtility.getTemplate('panel'),
+        $ngViewUtility.getTemplate('button'),
+        $ngViewUtility.getTemplate('text'),
+        $ngViewUtility.getTemplate('select'),
+        $ngViewUtility.getTemplate('checkbox'),
+        $ngViewUtility.getTemplate('radio'),
+        $ngViewUtility.getTemplate('ng-grid'),
+        $ngViewUtility.getTemplate('chartjs'),
+        $ngViewUtility.getTemplate('highchart'),
+        $ngViewUtility.getTemplate('leaflet'),
+        $ngViewUtility.getTemplate('tabpanel')
     ]).then(function (data) {
         //I am done!
     });
@@ -30,7 +30,7 @@ angular.module('ngViewBuilder', [])
 * Utility Service
 */
 .service('$ngViewUtility', ['$rootScope', '$templateCache', '$http', '$q', '$log', function ($rootScope, $templateCache, $http, $q, $log) {
-    this.getTemplateByType = function(tmplateName) {
+    this.getTemplate = function (tmplateName) {
         var deferred = $q.defer();
         $http({
             //Order of priority: user path (1),  appPath.tpl (2), appPath.lib/nbViewBuilder/tpl (3)
@@ -40,7 +40,7 @@ angular.module('ngViewBuilder', [])
             $templateCache.put(tmplateName, content)
             deferred.resolve();
         }).error(function () {
-            $log.warn('ngViewBuilder - Run: Failed load template ' + tmplateName + '.html');
+            $log.warn('ngViewBuilder - getTemplate: Failed load template ' + tmplateName + '.html');
             deferred.resolve();
         });
         return deferred.promise;
@@ -439,7 +439,7 @@ angular.module('ngViewBuilder', [])
     /**
      * Build panel / field of type unknown
      */
-    function buildPanel(scope, control, key, parentEl, dataPath, isCallback, model, isCallback) {
+    function buildPanel(scope, control, key, parentEl, dataPath, isCallback, model) {
 
         var template = control.content || '<div id="{{id}}" name="{{name}}"></div>';
 
@@ -447,8 +447,8 @@ angular.module('ngViewBuilder', [])
             template = $ngViewUtility.getTemplateFromCache(control.template || control.type);
             if (!template) {
                 if (!isCallback) {
-                    $ngViewUtility.getTemplateByType(control.template || control.type).then(function () {
-                        buildPanel(scope, control, key, parentEl, dataPath, true);
+                    $ngViewUtility.getTemplate(control.template || control.type).then(function () {
+                        buildPanel(scope, control, key, parentEl, dataPath, true, model);
                     });
                     return;
                 }
@@ -534,7 +534,7 @@ angular.module('ngViewBuilder', [])
         var template = $ngViewUtility.getTemplateFromCache(control.template || control.type);
         if (!template) {
             if (!isCallback && false) {
-                $ngViewUtility.getTemplateByType(control.template || control.type).then(function () {
+                $ngViewUtility.getTemplate(control.template || control.type).then(function () {
                     buildFormPanel(scope, control, key, parentEl, dataPath, true);
                 });
                 return;
@@ -618,7 +618,7 @@ angular.module('ngViewBuilder', [])
         var template = $ngViewUtility.getTemplateFromCache(templateType);
         if (!template) {
             if (!isCallback) {
-                $ngViewUtility.getTemplateByType(templateType).then(function () {
+                $ngViewUtility.getTemplate(templateType).then(function () {
                     buildFormElement(scope, control, key, parentEl, dataPath, true);
                 });
                 return;
