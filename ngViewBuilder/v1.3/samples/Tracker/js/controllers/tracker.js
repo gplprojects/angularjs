@@ -77,13 +77,18 @@
                 for (var i = 0; i < $scope.model.expenses.length; i++) {
                     var per = (parseFloat($scope.model.expenses[i].amount) / parseFloat($scope.model.total)) * 100;
                     meta.children['exp-' + i] = {
-                        content: '<span style="color:' + $scope.model.categories[$scope.model.expenses[i].category].color + ';">' + $scope.model.expenses[i].notes + ' </span> <progressbar animate="true" value="' + per + '" type="success"><b>' + $scope.model.expenses[i].amount + '</b></progressbar>'
+                                                    //content: '<span>' + $scope.model.expenses[i].notes + ' </span><div class="progress" style="display:block;"><div class="progress-bar" role="progressbar" aria-valuenow="' + per + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + per + '%; background-color:' + $scope.model.categories[$scope.model.expenses[i].category].color + '">' + $scope.model.expenses[i].amount + '</div></div>',
+                                                    compile: true,
+                                                    content: '<div><span>' + $scope.model.expenses[i].notes + ' </span> <progressbar animate="true" value="' + per + '" type="' + $scope.model.expenses[i].category + '"><b>' + $scope.model.expenses[i].amount + '</b></progressbar></div>'
                                                 }
                     }
                 break;
         }
+    }
 
-        console.log($scope.model.total);
+    $scope.initModule = function () {
+        angular.element('.progress-bar-cat1');
+
     }
 
     this.loadModel();

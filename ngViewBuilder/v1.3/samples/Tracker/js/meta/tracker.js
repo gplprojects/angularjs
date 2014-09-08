@@ -25,7 +25,7 @@
                     children: {
                         chartpanel1: {
                             type: 'panel',
-                            title: 'Highcharts',
+                            title: 'Categories',
                             children: {
                                 highchart1: {
                                     type: 'chartpanel',
@@ -45,7 +45,10 @@
                                         },
                                         "series": [],
                                         "title": {
-                                            "text": "Categories"
+                                            "text": " "
+                                        },
+                                        "credits": {
+                                            "enabled": false
                                         }
                                     }
                                 }

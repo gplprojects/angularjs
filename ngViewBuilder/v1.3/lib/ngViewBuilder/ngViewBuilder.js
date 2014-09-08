@@ -317,7 +317,8 @@ angular.module('ngViewBuilder', [])
 
         scope.$schema.$metainfo = scope.schema.$metainfo || { view: scope.schema.view};
 
-        var rootEl = angular.element(document.querySelector('#screen-' + scope.$schema.$metainfo.view));
+        var rootElName = scope.$schema.elName || (scope.$schema.$metainfo.view ? 'screen-' + scope.$schema.$metainfo.view : false);
+        var rootEl = angular.element(rootElName ? '#' + rootElName : document.body);
         
         try {
             buildInternal(scope, scope.schema, scope.schema, rootEl, scope.model);
@@ -513,15 +514,18 @@ angular.module('ngViewBuilder', [])
         var panelEl = angular.element($interpolate(template)(control));
 
         addAttributes(control, (panelEl.attr('id') !== control.id ? angular.element('#' + control.id, panelEl) : panelEl));
-
-        if (typeof scope.afterRender === 'function')
-            scope.afterRender(control.id, control, panelEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
-
+        
         if (!control.content && control.children) {
             angular.forEach(control.children, function (childObject, childName) {
                 buildControlByType(scope, childObject, childName, (panelEl.attr('id') !== control.id ? angular.element('#' + control.id, panelEl) : panelEl), dataPath, model);
             });
         }
+
+        if (control.compile)
+            $compile(panelEl.contents())(scope);
+
+        if (typeof scope.afterRender === 'function')
+            scope.afterRender(control.id, control, panelEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
 
         parentEl.append(panelEl);
     }
@@ -559,6 +563,9 @@ angular.module('ngViewBuilder', [])
                 buildControlByType(scope, childObject, childName, formEl, dataPath, model);
             });
         }
+
+        if (control.compile)
+            $compile(formEl.contents())(scope);
 
         parentEl.append(formEl);
     }
@@ -632,6 +639,8 @@ angular.module('ngViewBuilder', [])
             scope.beforeRender(control.id, control, scope.$schema.config[control.name], scope.$schema.options[control.name]);
 
         var fieldEl = $interpolate(template)(control);
+        if (control.compile)
+            $compile(fieldEl.contents())(scope);
 
         parentEl.append(fieldEl);
         addAttributes(control, angular.element('#' + control.id, parentEl));
