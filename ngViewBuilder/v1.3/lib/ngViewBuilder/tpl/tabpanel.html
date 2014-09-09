@@ -1,4 +1,4 @@
-﻿<tabset>
+﻿<tabset ng-hide="{{hideWhen}}">
     <tab ng-repeat="tab in $schema.config.{{name}}.tabs" ng-init="hasContent = tab.content ? true : false; contentURL = tab.contentURL || tab.id + '.html'"
          heading="{{interpolateStartSymbol}}tab.title{{interpolateEndSymbol}}"
          active="tab.active"

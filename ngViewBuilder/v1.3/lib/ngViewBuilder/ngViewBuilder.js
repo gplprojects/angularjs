@@ -13,9 +13,12 @@ angular.module('ngViewBuilder', [])
         $ngViewUtility.getTemplate('panel'),
         $ngViewUtility.getTemplate('button'),
         $ngViewUtility.getTemplate('text'),
+        $ngViewUtility.getTemplate('textarea'),
         $ngViewUtility.getTemplate('select'),
         $ngViewUtility.getTemplate('checkbox'),
         $ngViewUtility.getTemplate('radio'),
+        $ngViewUtility.getTemplate('date'),
+        $ngViewUtility.getTemplate('datepicker'),
         $ngViewUtility.getTemplate('ng-grid'),
         $ngViewUtility.getTemplate('chartjs'),
         $ngViewUtility.getTemplate('highchart'),
@@ -402,12 +405,14 @@ angular.module('ngViewBuilder', [])
             case "email":
             case "password":
             case "date":
+            case "datepicker":
             case "time":
             case "select":
             case "multiselect":
             case "checkbox":
             case "radio":
             case "button":
+            case "textarea":
                 buildFormElement(scope, control, key, parentEl, dataPath, false, model);
                 break;
 
@@ -604,9 +609,41 @@ angular.module('ngViewBuilder', [])
                 templateType = 'text';
                 break
 
+            case "date":
+                scope.$schema.config[control.name].format = scope.$schema.config[control.name].format || 'dd/MM/yyyy';
+                scope.$schema.config[control.name].closeText = scope.$schema.config[control.name].closeText || 'Close';
+                /*
+                {
+                    format: 'dd/MM/yyyy',
+                    dateOptions: {
+                        formatYear: 'yy',
+                        startingDay: 1
+                    },
+                    closeText: 'Close'
+                }*/
+                break;
+            case "datepicker":
+                if (!control.config)
+                    control.config = {};
+                control.config.showWeeks = control.config.showWeeks || false;
+                control.config.height = control.config.height || 250;
+                break;
+            case "select":
+            case "multiselect":
+                control.optionsKey = control.optionsKey || "$schema.options." + control.name;
+                control.optionKey = control.optionKey || 'key';
+                control.optionValue = control.optionValue || 'value';
+                break;
             case "checkbox":
             case "radio":
-                control.hasOptions = scope.$schema.options[control.name] ? true : false;
+                
+                control.hasOptions = control.hasOptions || scope.$schema.options[control.name] ? true : false;
+                if (control.hasOptions) {
+                    control.optionsKey = control.optionsKey || "$schema.options." + control.name;
+                    control.optionKey = control.optionKey || 'key';
+                    control.optionValue = control.optionValue || 'value';
+                }
+
                 if (model) {
                     if (control.type === 'checkbox') {
 

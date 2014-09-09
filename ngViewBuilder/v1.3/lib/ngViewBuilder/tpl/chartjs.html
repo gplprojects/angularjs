@@ -1,4 +1,4 @@
-﻿<div class="chart-container chart-{{name}}" id="container-{{name}}" name="container-{{name}}" style="margin:5px;">
+﻿<div ng-hide="{{hideWhen}}"  class="chart-container chart-{{name}}" id="container-{{name}}" name="container-{{name}}" style="margin:5px;">
     <canvas id="{{name}}"
             name={{name}}
             chart="{{config.type}}"

@@ -1,5 +1,5 @@
 ﻿<!-- http://lorenzofox3.github.io/smart-table-website/ -->
-<div class="grid {{type}}-table" style="min-height:180px;">
+<div class="grid {{type}}-table" style="min-height:180px;" ng-hide="{{hideWhen}}">
     <table st-table="$schema.config[control.name].data" class="table table-striped">
         <thead ng-if="$schema.config[control.name].hideHeaders !== true">
             <tr ng-repeat="column in config.columnDefs">

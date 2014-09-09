@@ -28,7 +28,7 @@ window[appName].config(['$stateProvider', '$urlRouterProvider', function ($state
             controller: 'addController',
             resolve: {
                 load: ['$ngViewLoader', function ($ngViewLoader) {
-                    return $ngViewLoader.load('add', '../js/controllers/add', 'addController', true);
+                    return $ngViewLoader.load('add', '../js/controllers/add', 'addController', false);
                 }]
             }
         });
