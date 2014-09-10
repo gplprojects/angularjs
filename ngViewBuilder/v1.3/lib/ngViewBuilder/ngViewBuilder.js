@@ -248,8 +248,10 @@ angular.module('ngViewBuilder', [])
                 controller.prototype.$metaInfo = { view: viewName, controller: controllerName, controllerSrc: uri, loadedBy: 'loader' };
                 //Init
                 controller.prototype.$init = function (scope) {
-                    if (skipRendering === true)
+                    if (skipRendering === true) {
+                        $log.info("ngViewBuilder - $init: User has set true to skip view building '" + controllerName + "' and view name '" + viewName + "'");
                         return;
+                    }
                     scope.getScreenMeta(this.$metaInfo.view, function (metaData) {
                         if (!metaData)
                             return;
@@ -318,7 +320,7 @@ angular.module('ngViewBuilder', [])
         if (!scope.$temp)
             scope.$temp = {};
 
-        scope.$schema.$metainfo = scope.schema.$metainfo || { view: scope.schema.view};
+        scope.$schema.$metainfo = scope.schema.metainfo || { view: scope.schema.view};
 
         var rootElName = scope.$schema.elName || (scope.$schema.$metainfo.view ? 'screen-' + scope.$schema.$metainfo.view : false);
         var rootEl = angular.element(rootElName ? '#' + rootElName : document.body);
@@ -474,7 +476,7 @@ angular.module('ngViewBuilder', [])
             case "gridpanel":
                     
                     if (!scope.$schema.config[control.name].data)
-                        scope.$schema.config[control.name].data = ("model." + (dataPath ? dataPath + "." + (control.model || control.name) : (control.model || control.name)))
+                        scope.$schema.config[control.name].data = ("model." + (dataPath ? dataPath : (control.model || control.name)))
 
                     if (!scope.$schema.config[control.name].selectedItems) {
                         scope.$temp[control.name].selectedItesm = [];

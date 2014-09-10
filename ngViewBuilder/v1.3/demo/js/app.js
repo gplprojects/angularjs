@@ -87,12 +87,14 @@ window[appName].controller('applicationController', ['$rootScope', '$scope', '$h
 
                 console.log("Performing action - " + actionName);
 
+                //To Do: params
                 var options = {
+                    actionmeta: action,
                     el: elementName,
                     eventType: $event.type,
-                    action: scope.$schema.$metainfo.view + "/" + actionName,
+                    action: (action.url || ("/api" + scope.$schema.$metainfo.view + "/" + actionName)),
                     type: action.type,
-                    data: req,
+                    data: action.requestPath ? scope.model[action.requestPath] : scope.model,
                     onComplete: function (data, ops, hasError) {
                         scope.doParseResponse(data, ops, hasError);
                     }
@@ -109,6 +111,10 @@ window[appName].controller('applicationController', ['$rootScope', '$scope', '$h
 
     /************************************************************ Handle REST actions ****************************************************************/
     $scope.$interceptRequest = function (options) {
+
+        if (!options.headers) {
+            options.headers = { 'Authorization': 'cd913947-477d-4a4f-bd17-fd5f062dbc24' };
+        }
         return options.data;
     }
 
@@ -122,22 +128,34 @@ window[appName].controller('applicationController', ['$rootScope', '$scope', '$h
 
         if (options.type === 'get') {
             $http({
-                url: 'app/' + options.action,
-                method: (options.type || "GET")
+                url: options.action,
+                method: (options.type || "GET"),
+                params: options.params ? options.params : {},
+                headers: options.headers
             })
             .success(function (data) { $scope.$interceptResponse(data, options, false); })
             .error(function (data) { $scope.$interceptResponse(data, options, true); });
         }
         else {
-            $http.post('app/' + options.action, options.data)
+            $http.post( options.action,
+                        options.data,
+                        {
+                            params: options.params ? options.params : {},
+                            headers: options.headers
+                        })
                 .success(function (data) { $scope.$interceptResponse(data, options, false); })
                 .error(function (data) { $scope.$interceptResponse(data, options, true); });
         }
     }
 
     $scope.$interceptResponse = function (data, options, hasError) {
-        if (options[hasError ? 'onSuccess' : 'onError'])
-            options[hasError ? 'onSuccess' : 'onError'](data, options, hasError);
+        
+        scope = angular.element('#' + options.el).scope();
+        if (data && options.actionmeta.responsePath)
+            scope.model[options.actionmeta.responsePath] = data;
+
+        if (options['onComplete'])
+            options['onComplete'](data, options, hasError);
     }
     /**
     * Destroy scope and leaky objects

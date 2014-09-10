@@ -159,7 +159,7 @@
                                           }
                                         ],
                                         "title": {
-                                            "text": "Hello"
+                                            "text": "Chart Sample 2"
                                         },
                                         "credits": {
                                             "enabled": true
