@@ -67,7 +67,10 @@
                                             type: 'button',
                                             label: 'Back',
                                             handle: 'handleUIEvents',
-                                            attr: { class: 'pull-right', style: "margin-right: 15px;" }
+                                            attr: { class: 'pull-right', style: "margin-right: 15px;" },
+                                            actions: {
+                                                back: { params: '', processingType: 'nav', path: '#/tracker', onBefore: function () { return true;} }
+                                            }
                                         }
                                     }
                                 }

@@ -7,50 +7,31 @@ angular.module('ngViewBuilder', [])
  * Preload required templates 
  */
 .run(['$q', '$ngViewUtility', function ($q, $ngViewUtility) {
-
-    $q.all([
-        $ngViewUtility.getTemplate('form'),
-        $ngViewUtility.getTemplate('panel'),
-        $ngViewUtility.getTemplate('button'),
-        $ngViewUtility.getTemplate('text'),
-        $ngViewUtility.getTemplate('textarea'),
-        $ngViewUtility.getTemplate('select'),
-        $ngViewUtility.getTemplate('checkbox'),
-        $ngViewUtility.getTemplate('radio'),
-        $ngViewUtility.getTemplate('date'),
-        $ngViewUtility.getTemplate('datepicker'),
-        $ngViewUtility.getTemplate('ng-grid'),
-        $ngViewUtility.getTemplate('chartjs'),
-        $ngViewUtility.getTemplate('highchart'),
-        $ngViewUtility.getTemplate('leaflet'),
-        $ngViewUtility.getTemplate('tabpanel')
-    ]).then(function (data) {
-        //I am done!
-    });
+    
 }])
 
 /**
 * Utility Service
 */
 .service('$ngViewUtility', ['$rootScope', '$templateCache', '$http', '$q', '$log', function ($rootScope, $templateCache, $http, $q, $log) {
-    this.getTemplate = function (tmplateName) {
-        var deferred = $q.defer();
-        $http({
-            //Order of priority: user path (1),  appPath.tpl (2), appPath.lib/nbViewBuilder/tpl (3)
-            url: (tmplateName.indexOf("/") != -1 ? '' : (window.appPath.tpl || (window.appPath.lib + 'ngViewBuilder/tpl/'))) + tmplateName + '.html',
-            method: "GET"
-        }).success(function (content) {
-            $templateCache.put(tmplateName, content)
-            deferred.resolve();
-        }).error(function () {
-            $log.warn('ngViewBuilder - getTemplate: Failed load template ' + tmplateName + '.html');
-            deferred.resolve();
-        });
-        return deferred.promise;
+    this.getTemplate = function (template) {
+
+        if (/<.+>/.test(template))
+            $templateCache.put(template, template);
+        else {
+            $.ajax({
+                type: "GET",
+                url: (template.indexOf("/") != -1 ? '' : (window.appPath.tpl || (window.appPath.lib + 'ngViewBuilder/tpl/'))) + template + '.html',
+                async: false
+            }).success(function (content) {
+                $templateCache.put(template, content)
+            });
+        }
+        return $templateCache.get(template) || "<div> Template content not found </div>";
     };
 
-    this.getTemplateFromCache = function (tmplateName) {
-        return $templateCache.get(tmplateName);
+    this.getTemplateFromCache = function (templateKey) {
+        return $templateCache.get(templateKey) || this.getTemplate(templateKey);
     };
 
     this.getDefaultConfig = function(controlType) {
@@ -58,59 +39,18 @@ angular.module('ngViewBuilder', [])
         switch(controlType){
             case "ng-gid":
                 break;
-            
-            /*case "highcharts":
-            case "highchart":
-                return {
-                    "options": {
-                        "chart": {
-                            "type": "areaspline"
-                        },
-                        "plotOptions": {
-                            "series": {
-                                "stacking": ""
-                            }
-                        }
-                    },
-                    "series": [
-                      {
-                          "name": "Some data",
-                          "data": [
-                            1,
-                            2,
-                            4,
-                            7,
-                            3
-                          ],
-                          "id": "series-0",
-                          "type": "column"
-                      }
-                    ],
-                    "title": {
-                        "text": "Hello"
-                    },
-                    "credits": {
-                        "enabled": true
-                    },
-                    "loading": false
-                };*/
             case "chartjs":
                 return {
                     // Boolean - Whether to animate the chart
                     animation: true,
-
                     // Number - Number of animation steps
                     animationSteps: 60,
-
                     // String - Animation easing effect
                     animationEasing: "easeOutQuart",
-
                     // Boolean - If we should show the scale at all
                     showScale: true,
-
                     // Boolean - If we want to override with a hard coded scale
                     scaleOverride: false,
-
                     // ** Required if scaleOverride is true **
                     // Number - The number of steps in a hard coded scale
                     scaleSteps: null,
@@ -118,97 +58,66 @@ angular.module('ngViewBuilder', [])
                     scaleStepWidth: null,
                     // Number - The scale starting value
                     scaleStartValue: null,
-
                     // String - Colour of the scale line
                     scaleLineColor: "rgba(0,0,0,.1)",
-
                     // Number - Pixel width of the scale line
                     scaleLineWidth: 1,
-
                     // Boolean - Whether to show labels on the scale
                     scaleShowLabels: true,
-
                     // Interpolated JS string - can access value
                     scaleLabel: "<%=value%>",
-
                     // Boolean - Whether the scale should stick to integers, not floats even if drawing space is there
                     scaleIntegersOnly: true,
-
                     // Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
                     scaleBeginAtZero: false,
-
                     // String - Scale label font declaration for the scale label
                     scaleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-
                     // Number - Scale label font size in pixels
                     scaleFontSize: 12,
-
                     // String - Scale label font weight style
                     scaleFontStyle: "normal",
-
                     // String - Scale label font colour
                     scaleFontColor: "#666",
-
                     // Boolean - whether or not the chart should be responsive and resize when the browser does.
                     responsive: false,
-
                     // Boolean - Determines whether to draw tooltips on the canvas or not
                     showTooltips: true,
-
                     // Array - Array of string names to attach tooltip events
                     tooltipEvents: ["mousemove", "touchstart", "touchmove"],
-
                     // String - Tooltip background colour
                     tooltipFillColor: "rgba(0,0,0,0.8)",
-
                     // String - Tooltip label font declaration for the scale label
                     tooltipFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-
                     // Number - Tooltip label font size in pixels
                     tooltipFontSize: 14,
-
                     // String - Tooltip font weight style
                     tooltipFontStyle: "normal",
-
                     // String - Tooltip label font colour
                     tooltipFontColor: "#fff",
-
                     // String - Tooltip title font declaration for the scale label
                     tooltipTitleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-
                     // Number - Tooltip title font size in pixels
                     tooltipTitleFontSize: 14,
-
                     // String - Tooltip title font weight style
                     tooltipTitleFontStyle: "bold",
-
                     // String - Tooltip title font colour
                     tooltipTitleFontColor: "#fff",
-
                     // Number - pixel width of padding around tooltip text
                     tooltipYPadding: 6,
-
                     // Number - pixel width of padding around tooltip text
                     tooltipXPadding: 6,
-
                     // Number - Size of the caret on the tooltip
                     tooltipCaretSize: 8,
-
                     // Number - Pixel radius of the tooltip border
                     tooltipCornerRadius: 6,
-
                     // Number - Pixel offset from point x to tooltip edge
                     tooltipXOffset: 10,
-
                     // String - Template string for single tooltips
                     tooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %>",
-
                     // String - Template string for single tooltips
                     multiTooltipTemplate: "<%= value %>",
-
                     // Function - Will fire on animation progression.
                     onAnimationProgress: function(){},
-
                     // Function - Will fire on animation completion.
                     onAnimationComplete: function(){}
                 };
@@ -453,17 +362,8 @@ angular.module('ngViewBuilder', [])
 
         if (!control.content && (control.template || control.type)) {
             template = $ngViewUtility.getTemplateFromCache(control.template || control.type);
-            if (!template) {
-                if (!isCallback) {
-                    $ngViewUtility.getTemplate(control.template || control.type).then(function () {
-                        buildPanel(scope, control, key, parentEl, dataPath, true, model);
-                    });
-                    return;
-                }
-                else {
-                    template = '<div id="{{id}}" name="{{name}}"></div>';
-                }
-            }
+            if (!template)
+                template = '<div id="{{id}}" name="{{name}}"></div>';
         }
 
         control.dataPath = dataPath || control.name;
@@ -503,12 +403,14 @@ angular.module('ngViewBuilder', [])
                     
                     angular.forEach(scope.$schema.config[control.name].tabs, function (tab) {
                         if (tab.children && !tab.content && !tab.contentURL) {
-                            var tabContentPanel = angular.element("<div></div>");
-                            angular.forEach(tab.children, function (tabChild, tabChildName) {
-                                buildControlByType(scope, tabChild, tabChildName, tabContentPanel, dataPath, model);
-                            });
-                            $templateCache.put(tab.id + ".html", tabContentPanel.html());
-                            delete tabContentPanel;
+                            if (!$templateCache.get(tab.id + ".html")) {
+                                var tabContentPanel = angular.element("<div></div>");
+                                angular.forEach(tab.children, function (tabChild, tabChildName) {
+                                    buildControlByType(scope, tabChild, tabChildName, tabContentPanel, dataPath, model);
+                                });
+                                $templateCache.put(tab.id + ".html", tabContentPanel.html());
+                                delete tabContentPanel;
+                            }
                         }
                     });
                 }
@@ -543,18 +445,9 @@ angular.module('ngViewBuilder', [])
     function buildFormPanel(scope, control, key, parentEl, dataPath, isCallback, model) {
 
         var template = $ngViewUtility.getTemplateFromCache(control.template || control.type);
-        if (!template) {
-            if (!isCallback && false) {
-                $ngViewUtility.getTemplate(control.template || control.type).then(function () {
-                    buildFormPanel(scope, control, key, parentEl, dataPath, true);
-                });
-                return;
-            }
-            else {
-                template = '<form id="{{id}}" name="{{name}}"></form>';
-            }
-        }
-
+        if (!template)
+            template = '<form id="{{id}}" name="{{name}}"></form>';
+            
         if (typeof scope.beforeRender === 'function')
             scope.beforeRender(control.id, control, scope.$schema.config[control.name], scope.$schema.options[control.name]);
 
@@ -614,28 +507,22 @@ angular.module('ngViewBuilder', [])
             case "date":
                 scope.$schema.config[control.name].format = scope.$schema.config[control.name].format || 'dd/MM/yyyy';
                 scope.$schema.config[control.name].closeText = scope.$schema.config[control.name].closeText || 'Close';
-                /*
-                {
-                    format: 'dd/MM/yyyy',
-                    dateOptions: {
-                        formatYear: 'yy',
-                        startingDay: 1
-                    },
-                    closeText: 'Close'
-                }*/
                 break;
+
             case "datepicker":
                 if (!control.config)
                     control.config = {};
                 control.config.showWeeks = control.config.showWeeks || false;
                 control.config.height = control.config.height || 250;
                 break;
+
             case "select":
             case "multiselect":
                 control.optionsKey = control.optionsKey || "$schema.options." + control.name;
                 control.optionKey = control.optionKey || 'key';
                 control.optionValue = control.optionValue || 'value';
                 break;
+
             case "checkbox":
             case "radio":
                 
@@ -662,18 +549,9 @@ angular.module('ngViewBuilder', [])
         }
 
         var template = $ngViewUtility.getTemplateFromCache(templateType);
-        if (!template) {
-            if (!isCallback) {
-                $ngViewUtility.getTemplate(templateType).then(function () {
-                    buildFormElement(scope, control, key, parentEl, dataPath, true);
-                });
-                return;
-            }
-            else {
-                template = "<p> Template '" + templateType + ".html' not found!<p>"
-            }
-        }
-
+        if (!template)
+            template = "<p> Template '" + templateType + ".html' not found!<p>"
+            
         if (typeof scope.beforeRender === 'function')
             scope.beforeRender(control.id, control, scope.$schema.config[control.name], scope.$schema.options[control.name]);
 
@@ -688,4 +566,207 @@ angular.module('ngViewBuilder', [])
             scope.afterRender(control.id, control, fieldEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
         return;
     }
+}]).controller('$viewBuilderController', ['$rootScope', '$scope', '$http', '$ngViewBuilder', '$ngViewLoader', '$location', function ($rootScope, $scope, $http, $ngViewBuilder, $ngViewLoader, $location) {
+
+    //Keep something in global (i.e.,not in $rootScope)
+    $scope.meta = {
+        name: "Demo Application",
+        version: '0.1',
+        author: 'Murugesan G',
+        date: 'Jul 2014',
+        view: 'Root'
+    };
+
+    /*************************************************** Handle screen initialization and build view *************************************************/
+    /**
+    * Base API which will gets view meta info. from backend
+    * @viewName (String) - View Name
+    * @callback (function) - Callback function to process meta data
+    */
+    $scope.getScreenMeta = function (viewName, callback) {
+        $ngViewLoader.loadMeta(viewName, callback, "js/meta");
+    }
+
+    /**
+    * Base API which will takes view meta as input and sends it to formbuilder to generate view
+    * @scope (Object) - View scope
+    */
+    $scope.InitializeScreen = function (scope) {
+        var start = new Date();
+
+        $ngViewBuilder.build(scope);
+
+        var end = new Date();
+        console.log("Total time taken to render view '" + (scope.$schema.$metainfo.view) + "' is '" + (end.getTime() - start.getTime()) + " ms'");
+    }
+
+    /************************************************************ Handle DOM actions ****************************************************************/
+    /**
+     * DOM action handler
+     */
+    $scope.$doPefromAction = function ($event, elementName, scope) {
+
+        if (!scope && !$event)
+            return;
+
+        if (!scope && $event) {
+            scope = angular.element($event.target).scope()
+        }
+
+        if (!scope)
+            scope = $scope;
+
+        if (scope.$schema.config[elementName]) {
+
+            angular.forEach(scope.$schema.config[elementName].actions, function (action, actionName) {
+
+                console.log("Performing action - " + actionName);
+
+                //To Do: params
+                var options = angular.copy(action);
+                options.el = elementName;
+                options.eventType = $event.type;
+                options.action = (action.url || ("/api" + scope.$schema.$metainfo.view + "/" + actionName));
+                options.data = action.requestPath ? scope.model[action.requestPath] : scope.model
+                options.onComplete = action.onComplete || function (data, ops, hasError) {
+                    scope.doParseResponse(data, ops, hasError);
+                }
+
+                var req = action.onBefore ? action.onBefore(options) : scope.doPrepareRequest(options);
+                if (req === false)
+                    return;
+
+                scope.$doAction(options);
+            });
+        }
+    }
+
+    /************************************************************ Handle REST actions ****************************************************************/
+    /**
+     * Intercept all REST request 
+     */
+    $scope.$interceptRequest = function (options) {
+
+        if (!options.headers) {
+            options.headers = { 'Authorization': 'cd913947-477d-4a4f-bd17-fd5f062dbc24' };
+        }
+        return options.data;
+    }
+
+    /**
+     * Raw REST action handler - Based on action configuration switches framework
+     */
+    $scope.$doAction = function (options) {
+        options.data = $scope.$interceptRequest(options);
+
+        switch (options.processingType) {
+            case "nav":
+                $location.path(options.path || options.url);
+                break;
+            case 'ajax':
+                $scope.$doAjaxAction(options);
+                break;
+
+            case 'localstore':
+                $scope.$doHttpAction(options);
+                break;
+
+            case '$http':
+            case 'http':
+            case 'angular':
+            default:
+                $scope.$doHttpAction(options);
+        }
+    }
+
+    /**
+     * Use local store for handling application data (Usefull for dev and debug versions)
+     */
+    $scope.$doLocalStore = function (options) {
+
+        if (options.type === 'set')
+            localStorage.setItem(options.action, JSON.stringify(options.data));
+        
+        return JSON.parse(localStorage.getItem(options.action));
+    }
+
+    /**
+     * Use JQuery's ajax for executing REST actions
+     */
+    $scope.$doAjaxAction = function (options) {
+        switch (options.type) {
+            case "post":
+                $.ajax.post(options.action,
+                    options.data,
+                    {
+                        params: options.params ? options.params : {},
+                        headers: options.headers
+                    })
+                    .success(function (data) { $scope.$interceptResponse(data, options, false); })
+                    .error(function (data) { $scope.$interceptResponse(data, options, true); });
+                break;
+
+            default:
+                $.ajax({
+                    url: options.action,
+                    method: (options.type || "GET"),
+                    params: options.params ? options.params : {},
+                    headers: options.headers
+                })
+                .success(function (data) { $scope.$interceptResponse(data, options, false); })
+                .error(function (data) { $scope.$interceptResponse(data, options, true); });
+                break;
+        }
+    }
+
+    /**
+     * Angular way of executing REST calls
+     */
+    $scope.$doHttpAction = function (options) {
+
+        switch (options.type) {
+            case "post":
+                    $http.post(options.action,
+                        options.data,
+                        {
+                            params: options.params ? options.params : {},
+                            headers: options.headers
+                        })
+                        .success(function (data) { $scope.$interceptResponse(data, options, false); })
+                        .error(function (data) { $scope.$interceptResponse(data, options, true); });
+                break;
+            
+            default:
+                $http({
+                    url: options.action,
+                    method: (options.type || "GET"),
+                    params: options.params ? options.params : {},
+                    headers: options.headers
+                })
+                .success(function (data) { $scope.$interceptResponse(data, options, false); })
+                .error(function (data) { $scope.$interceptResponse(data, options, true); });
+            break;
+        }
+    }
+
+    /**
+     * Intercept all REST calls response 
+     */
+    $scope.$interceptResponse = function (data, options, hasError) {
+        data = [{ "VesselCode": "KRSE", "VesselName": "KARA SEA", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 0, "CreatedDate": null, "ModifiedBy": 100142, "ModifiedDate": "2014-03-25T22:27:11", "Id": 100861, "Rev": 3, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "BASE", "VesselName": "BARENTS SEA", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 0, "CreatedDate": null, "ModifiedBy": 100142, "ModifiedDate": "2014-05-19T19:09:04", "Id": 101601, "Rev": 3, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "ASBT", "VesselName": "ASIAN BEAUTY", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2013-07-09T21:35:07", "ModifiedBy": 100142, "ModifiedDate": "2013-07-09T21:35:07", "Id": 101751, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "WCFU", "VesselName": "WUGANG CAIFU", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 0, "CreatedDate": null, "ModifiedBy": 100181, "ModifiedDate": "2013-07-31T05:07:06", "Id": 101892, "Rev": 3, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "LWSH", "VesselName": "LAIWU STEEL HARMONIOUS", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100181, "CreatedDate": "2013-08-01T22:40:12", "ModifiedBy": 100181, "ModifiedDate": "2013-08-01T22:40:12", "Id": 101902, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "OSCR", "VesselName": "OSAKA CAR", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2013-08-11T20:31:50", "ModifiedBy": 100142, "ModifiedDate": "2013-08-11T20:31:50", "Id": 101971, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "NOBL", "VesselName": "NORASIA BELLATRIX", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 0, "CreatedDate": null, "ModifiedBy": 100142, "ModifiedDate": "2013-08-19T00:00:43", "Id": 102021, "Rev": 3, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "WORT", "VesselName": "WUGANG ORIENT", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100181, "CreatedDate": "2013-08-19T05:32:48", "ModifiedBy": 100181, "ModifiedDate": "2013-08-19T05:32:48", "Id": 102061, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "HNST", "VesselName": "HANDAN STEEL", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2013-08-22T22:15:46", "ModifiedBy": 100142, "ModifiedDate": "2013-08-22T22:15:46", "Id": 102111, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "HYNW", "VesselName": "HYUNDAI NEW YORK", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2013-08-27T03:41:10", "ModifiedBy": 100142, "ModifiedDate": "2013-08-27T03:41:10", "Id": 102151, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "MAEU", "VesselName": "MAERSK EUBANK", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2013-09-03T23:04:12", "ModifiedBy": 100142, "ModifiedDate": "2013-09-03T23:04:12", "Id": 102191, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "CASK", "VesselName": "CAPE STORK", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2013-09-16T22:25:38", "ModifiedBy": 100142, "ModifiedDate": "2013-09-16T22:25:38", "Id": 102331, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "CHAW", "VesselName": "CAPE HAWK", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2013-09-17T00:56:57", "ModifiedBy": 100142, "ModifiedDate": "2013-09-17T00:56:57", "Id": 102341, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "KEPA", "VesselName": "KENTON PARK", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2013-09-22T23:10:02", "ModifiedBy": 100142, "ModifiedDate": "2013-09-22T23:10:02", "Id": 102411, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "BGAT", "VesselName": "BRIDGEGATE", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2013-09-23T23:45:08", "ModifiedBy": 100142, "ModifiedDate": "2013-09-23T23:45:08", "Id": 102441, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "HEYT", "VesselName": "HEYTHROP", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 0, "CreatedDate": null, "ModifiedBy": 100142, "ModifiedDate": "2013-10-09T01:42:48", "Id": 102541, "Rev": 3, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "CANT", "VesselName": "CAP ARNAUTI", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2013-11-20T21:41:50", "ModifiedBy": 100142, "ModifiedDate": "2013-11-20T21:41:50", "Id": 102781, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "WEGA", "VesselName": "WEST GATE", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100181, "CreatedDate": "2013-12-01T22:57:36", "ModifiedBy": 100181, "ModifiedDate": "2013-12-01T22:57:36", "Id": 102821, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "SGGT", "VesselName": "SHAGANG GIANT", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100181, "CreatedDate": "2013-12-19T00:32:13", "ModifiedBy": 100181, "ModifiedDate": "2013-12-19T00:32:13", "Id": 102931, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "CAEL", "VesselName": "CAPE EAGLE", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100181, "CreatedDate": "2014-01-02T00:03:16", "ModifiedBy": 100181, "ModifiedDate": "2014-01-02T00:03:16", "Id": 103001, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "WASI", "VesselName": "WUGANG ASIA", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-01-27T20:36:35", "ModifiedBy": 100142, "ModifiedDate": "2014-01-27T20:36:35", "Id": 103121, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "GFIR", "VesselName": "GUOFENG FIRST", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-01-31T23:38:15", "ModifiedBy": 100142, "ModifiedDate": "2014-01-31T23:38:15", "Id": 103141, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "CPER", "VesselName": "CAPE PEREGRINE", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-02-05T02:49:05", "ModifiedBy": 100142, "ModifiedDate": "2014-02-05T02:49:05", "Id": 103151, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "CELD", "VesselName": "CMA CGM ENFIELD", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-02-13T21:32:42", "ModifiedBy": 100142, "ModifiedDate": "2014-02-13T21:32:42", "Id": 103211, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "GRAY", "VesselName": "GREEN RAY ", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-04-09T22:53:41", "ModifiedBy": 100142, "ModifiedDate": "2014-04-09T22:53:41", "Id": 103461, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "NWAY", "VesselName": "NOBLEWAY", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-04-28T23:37:01", "ModifiedBy": 100142, "ModifiedDate": "2014-04-28T23:37:01", "Id": 103531, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "ASEA", "VesselName": "ANDAMAN SEA", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-05-14T19:26:51", "ModifiedBy": 100142, "ModifiedDate": "2014-05-14T19:26:51", "Id": 103581, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "MBEL", "VesselName": "MSC BELLATRIX", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-06-04T20:16:13", "ModifiedBy": 100142, "ModifiedDate": "2014-06-04T20:16:13", "Id": 103751, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "THUG", "VesselName": "THURINGIA", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-06-18T18:52:09", "ModifiedBy": 100142, "ModifiedDate": "2014-06-18T18:52:09", "Id": 103791, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "PUSA", "VesselName": "PUSAN", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-06-18T23:35:10", "ModifiedBy": 100142, "ModifiedDate": "2014-06-18T23:35:10", "Id": 103801, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "OTOW", "VesselName": "OSAKA TOWER", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-06-26T19:18:25", "ModifiedBy": 100142, "ModifiedDate": "2014-06-26T19:18:25", "Id": 103881, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "RUND", "VesselName": "RUTLAND", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-06-27T16:58:49", "ModifiedBy": 100142, "ModifiedDate": "2014-06-27T16:58:49", "Id": 103891, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "NIGF", "VesselName": "NILEDUTCH GIRAFFE", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-07-01T23:32:36", "ModifiedBy": 100142, "ModifiedDate": "2014-07-01T23:32:36", "Id": 103922, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "SFAI", "VesselName": "SHANGANG FAITH", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 0, "CreatedDate": null, "ModifiedBy": 100142, "ModifiedDate": "2014-07-10T19:15:33", "Id": 103971, "Rev": 3, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "INFR", "VesselName": "INDIAN FRIENDSHIP", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-07-15T20:12:08", "ModifiedBy": 100142, "ModifiedDate": "2014-07-15T20:12:08", "Id": 104001, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }, { "VesselCode": "DVGT", "VesselName": "DEVONGATE", "ClientId": 100131, "ClientName": "Eastern Pacific Shipping Pte Ltd", "CreatedBy": 100142, "CreatedDate": "2014-09-01T21:29:23", "ModifiedBy": 100142, "ModifiedDate": "2014-09-01T21:29:23", "Id": 104261, "Rev": 1, "IsPersisted": true, "Status": 1, "IsActive": true }];
+        if (options.el) {
+            scope = angular.element('#' + options.el).scope();
+            if (data && options.responsePath)
+                scope.model[options.responsePath] = data;
+        }
+
+        if (options['onComplete'])
+            options['onComplete'](data, options, hasError);
+    }
+    /**
+    * Destroy scope and leaky objects
+    */
+    $scope.$on('$destroy', function () {
+        console.log('Destroy - $viewBuilderController' );
+    });
 }]);

@@ -38,7 +38,7 @@
                             label: 'Search',
                             attr: { class: 'pull-right', style: "margin-right: 15px;" },
                             actions: {
-                                save: { url: '//166.62.16.148/staging/mvc/api/clientmaster/GetClientMasters', params: '', type: 'get', takeOnlyDirty: false, responsePath: 'Vessels' }
+                                save: { processingType:'ajax', url: '//166.62.16.148/staging/mvc/api/clientmaster/GetClientMasters', params: '', type: 'get', takeOnlyDirty: false, responsePath: 'Vessels' }
                             }
                         }
                     }
