@@ -34,13 +34,11 @@ angular.module('ngViewBuilder', [])
         return $templateCache.get(templateKey) || this.getTemplate(templateKey);
     };
 
-    this.getDefaultConfig = function(controlType) {
-
+    this.getDefaultConfig = function(controlType, control, scope) {
+        var defaultConfig = false;
         switch(controlType){
-            case "ng-gid":
-                break;
             case "chartjs":
-                return {
+                defaultConfig = {
                     // Boolean - Whether to animate the chart
                     animation: true,
                     // Number - Number of animation steps
@@ -126,8 +124,10 @@ angular.module('ngViewBuilder', [])
             default:
                 break;
         }
-
-        return false;
+        var userConfig = scope.getControlConfig ? scope.getControlConfig(control) : false;
+        if (userConfig)
+            return angular.extend(defaultConfig, userConfig);
+        return defaultConfig;
     }
 }])
 
@@ -311,22 +311,6 @@ angular.module('ngViewBuilder', [])
                                model ? model[modelPath] : undefined);
                 break;
 
-            case "text":
-            case "number":
-            case "email":
-            case "password":
-            case "date":
-            case "datepicker":
-            case "time":
-            case "select":
-            case "multiselect":
-            case "checkbox":
-            case "radio":
-            case "button":
-            case "textarea":
-                buildFormElement(scope, control, key, parentEl, dataPath, false, model);
-                break;
-
             case "custom":
                 var modelPath = getModel(control, model, false, {});
                 if (typeof scope.buildFormElement != 'undefined')
@@ -340,15 +324,18 @@ angular.module('ngViewBuilder', [])
                 break;
           
             default:
-                var modelPath = getModel(control, model, false, {});
-                buildPanel(scope,
-                            control,
-                            key,
-                            parentEl,
-                            //modelPath ? (dataPath ? (dataPath + "." + modelPath) : modelPath) : modelPath,
-                            modelPath ? (dataPath ? (dataPath + "." + modelPath) : modelPath) : (dataPath || modelPath),
-                            false,
-                            (modelPath && model) ? model[modelPath] : model);
+                if ((control.type && /panel/.test(control.type) === false) || control.isFormField)
+                    buildFormElement(scope, control, key, parentEl, dataPath, false, model);
+                else {
+                    var modelPath = getModel(control, model, false, {});
+                    buildPanel(scope,
+                                control,
+                                key,
+                                parentEl,
+                                modelPath ? (dataPath ? (dataPath + "." + modelPath) : modelPath) : (dataPath || modelPath),
+                                false,
+                                (modelPath && model) ? model[modelPath] : model);
+                }
                 break;
         }
     }
@@ -371,10 +358,15 @@ angular.module('ngViewBuilder', [])
         if (!scope.$temp[control.name])
             scope.$temp[control.name] = {};
 
-        var defaultConfig = $ngViewUtility.getDefaultConfig(control.controltype);
-        switch(control.type) {
+        var defaultConfig = $ngViewUtility.getDefaultConfig(control.controltype, control, scope);
+        if (defaultConfig) {
+            if (!scope.$schema.config[control.name])
+                scope.$schema.config[control.name] = {};
+
+            scope.$schema.config[control.name] = angular.extend(defaultConfig, scope.$schema.config[control.name]);
+        }
+        switch (control.type) {
             case "gridpanel":
-                    
                     if (!scope.$schema.config[control.name].data)
                         scope.$schema.config[control.name].data = ("model." + (dataPath ? dataPath : (control.model || control.name)))
 
@@ -385,10 +377,6 @@ angular.module('ngViewBuilder', [])
                     break
 
             case "chartpanel":
-
-                if (defaultConfig)
-                    scope.$schema.config[control.name] = angular.extend(defaultConfig, scope.$schema.config[control.name]);
-                
                 control.config.height = control.config.height || '98%';
                 control.config.width = control.config.width || '98%';
                 break;
@@ -398,7 +386,6 @@ angular.module('ngViewBuilder', [])
 
             case "tabpanel":
                 control.handle = control.handle || "handleViewEvents";
-                
                 if (scope.$schema.config[control.name].tabs && scope.$schema.config[control.name].tabs.length) {
                     
                     angular.forEach(scope.$schema.config[control.name].tabs, function (tab) {
@@ -498,7 +485,6 @@ angular.module('ngViewBuilder', [])
         }
         
         switch (control.type) {
-            case 'text':
             case 'password':
             case 'number':
                 templateType = 'text';
@@ -622,15 +608,15 @@ angular.module('ngViewBuilder', [])
 
                 console.log("Performing action - " + actionName);
 
-                //To Do: params
-                var options = angular.copy(action);
-                options.el = elementName;
-                options.eventType = $event.type;
-                options.action = (action.url || ("/api" + scope.$schema.$metainfo.view + "/" + actionName));
-                options.data = action.requestPath ? scope.model[action.requestPath] : scope.model
-                options.onComplete = action.onComplete || function (data, ops, hasError) {
-                    scope.doParseResponse(data, ops, hasError);
-                }
+                var options = angular.extend(angular.copy(action), {
+                    el: elementName,
+                    eventType : $event.type,
+                    action : (action.url || ("/api" + scope.$schema.$metainfo.view + "/" + actionName)),
+                    data : action.requestPath ? scope.model[action.requestPath] : scope.model,
+                    onComplete : action.onComplete || function (data, ops, hasError) {
+                        scope.doParseResponse(data, ops, hasError);
+                    }
+                });
 
                 var req = action.onBefore ? action.onBefore(options) : scope.doPrepareRequest(options);
                 if (req === false)

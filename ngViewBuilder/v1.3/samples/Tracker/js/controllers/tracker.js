@@ -59,20 +59,22 @@
                 //generate series
                 angular.forEach($scope.model.categories, function (category, categoryName) {
                     
-                    var values = [];
-                    angular.forEach(data, function (obj, date) {
-                        if (data[date][category.id])
-                            values.push(data[date][category.id].total);
-                        else
-                            values.push(0);
-                    });
+                    if (category.id) {
+                        var values = [];
+                        angular.forEach(data, function (obj, date) {
+                            if (data[date][category.id])
+                                values.push(data[date][category.id].total);
+                            else
+                                values.push(0);
+                        });
 
-                    series.push({
-                        "name": category.desc,
-                        "data": values,
-                        "id": "series-" + category.id,
-                        "type": "column"
-                    });
+                        series.push({
+                            "name": category.desc,
+                            "data": values,
+                            "id": "series-" + category.id,
+                            "type": "column"
+                        });
+                    }
                 });
                 
                 config.xAxis = { categories: xaxiscategories };
