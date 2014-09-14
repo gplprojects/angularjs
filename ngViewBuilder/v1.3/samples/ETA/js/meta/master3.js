@@ -1,6 +1,6 @@
 ﻿ScreenMetaData = {
     metainfo: {
-        view: 'master1',
+        view: 'master3',
         version: '1.0',
         date: 'Generated on dd/mm/yyyy'
     },
@@ -61,7 +61,7 @@
                                         columnDefs: [
                                             { id: "VesselCode", displayName: "Vessel Code", field: "VesselCode" },
 	                                        { id: "VesselName", displayName: "Vessel Name", field: "VesselName" },
-	                                        { id: "ClientId", displayName: "Client Name", field: "ClientId", enableCellEditOnFocus: true, editableCellTemplate: "<select ng-class=\"'colt' + col.index\" ng-input=\"COL_FIELD\" ng-model=\"COL_FIELD\"> <option ng-repeat=\"client in model.Clients\" value=\"{{client.ClientCode}}\">{{client.ClientName}}</option></select>" } //'<select ng-class=\"colt\" + col.index\" ng-model="id"></select>' }
+	                                        { id: "ClientId", displayName: "Client Name", field: "ClientId", enableCellEditOnFocus: true, editableCellTemplate: "<select ng-class=\"'colt' + col.index\" ng-input=\"COL_FIELD\" ng-model=\"COL_FIELD\"> <option ng-repeat=\"client in model.Clients\" value=\"{{client.ClientCode}}\">{{client.ClientName}}</option></select>" } //'<select ng-class=\"colt\" + col.index\" ng-model="ClientId"></select>' }
                                         ],
                                         enableCellSelection: true,
                                         enableRowSelection: false,

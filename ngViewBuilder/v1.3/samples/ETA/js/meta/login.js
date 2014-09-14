@@ -35,7 +35,7 @@
                                                     label: 'Login',
                                                     attr: { class: 'pull-right', style: "margin-right: 15px;" },
                                                     actions: {
-                                                        save: { processingType: 'ajax', url: '//166.62.16.148/staging/mvc/api/security/authenticateuser', params: '', type: 'post', takeOnlyDirty: false, requestPath: 'loginform', responsePath: '', isFilling: false }
+                                                        save: { processingType: 'ajax', url: '//166.62.16.148/staging/mvc/api/security/authenticateuser', params: '', type: 'get', takeOnlyDirty: false, requestPath: 'loginform', responsePath: '', isFilling: false }
                                                     }
                                                 }
                                             }

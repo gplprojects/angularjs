@@ -42,20 +42,20 @@ window[appName].config(['$stateProvider', '$urlRouterProvider', function ($state
             }
         }).state('home.master2', {
             url: '/master2',
-            templateUrl: 'views/home.html',
-            controller: 'homeController',
+            template: viewTemplate.replace(/{{view}}/g, 'master2'),
+            controller: 'master2Controller',
             resolve: {
                 load: ['$ngViewLoader', function ($ngViewLoader) {
-                    return $ngViewLoader.load('home', '../js/controllers/home', 'homeController', true);
+                    return $ngViewLoader.load('master2', '../js/controllers/master2', 'master2Controller', true);
                 }]
             }
         }).state('home.master3', {
             url: '/master3',
-            templateUrl: 'views/home.html',
-            controller: 'homeController',
+            template: viewTemplate.replace(/{{view}}/g, 'master3'),
+            controller: 'master3Controller',
             resolve: {
                 load: ['$ngViewLoader', function ($ngViewLoader) {
-                    return $ngViewLoader.load('home', '../js/controllers/home', 'homeController', true);
+                    return $ngViewLoader.load('master3', '../js/controllers/master3', 'master3Controller', true);
                 }]
             }
         });

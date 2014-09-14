@@ -8,7 +8,7 @@
     }
 
     $scope.doParseResponse = function (data, ops, hasError) {
-        console.log("Indise addController's responseHandler");
+        
     }
 
     this.$init($scope);
