@@ -156,7 +156,7 @@ angular.module('ngViewBuilder', [])
                 //Meta info
                 controller.prototype.$metaInfo = { view: viewName, controller: controllerName, controllerSrc: uri, loadedBy: 'loader' };
                 //Init
-                controller.prototype.$init = function (scope) {
+                controller.prototype.$init = function (scope, initCallback, callBack) {
                     if (skipRendering === true) {
                         $log.info("ngViewBuilder - $init: User has set true to skip view building '" + controllerName + "' and view name '" + viewName + "'");
                         return;
@@ -166,7 +166,14 @@ angular.module('ngViewBuilder', [])
                             return;
                         scope.schema = eval(metaData);
                         scope.schema.$metainfo = controller.prototype.$metaInfo;
-                        scope.InitializeScreen(scope);
+
+                        if (initCallback)
+                            initCallback(scope);
+                        else {
+                            scope.InitializeScreen(scope);
+                            if (callBack)
+                                callBack(scope)
+                        }
                     });
                 }
             }
@@ -228,7 +235,7 @@ angular.module('ngViewBuilder', [])
 
         if (!scope.$temp)
             scope.$temp = {};
-
+        scope.$schema.actions = scope.schema.actions;
         scope.$schema.$metainfo = scope.schema.metainfo || { view: scope.schema.view};
 
         var rootElName = scope.$schema.elName || (scope.$schema.$metainfo.view ? 'screen-' + scope.$schema.$metainfo.view : false);
@@ -553,7 +560,7 @@ angular.module('ngViewBuilder', [])
             scope.afterRender(control.id, control, fieldEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
         return;
     }
-}]).controller('$viewBuilderController', ['$rootScope', '$scope', '$http', '$ngViewBuilder', '$ngViewLoader', '$location', function ($rootScope, $scope, $http, $ngViewBuilder, $ngViewLoader, $location) {
+}]).controller('$viewBuilderController', ['$rootScope', '$scope', '$http', '$ngViewBuilder', '$ngViewLoader', '$location', '$parse', function ($rootScope, $scope, $http, $ngViewBuilder, $ngViewLoader, $location, $parse) {
 
     //Keep something in global (i.e.,not in $rootScope)
     $scope.meta = {
@@ -591,42 +598,96 @@ angular.module('ngViewBuilder', [])
     /**
      * DOM action handler
      */
-    $scope.$doPefromAction = function ($event, elementName, scope) {
+    $scope.$doPefromAction = function ($event, elementName, scope, actionToExecute, isInit, isFetch) {
 
         if (!scope && !$event)
             return;
 
-        if (!scope && $event) {
-            scope = angular.element($event.target).scope()
-        }
-
+        if (!scope && $event)
+            scope = angular.element($event.target || ('#' + elementName)).scope()
+        
         if (!scope)
             scope = $scope;
 
-        if (scope.$schema.config[elementName]) {
 
-            angular.forEach(scope.$schema.config[elementName].actions, function (action, actionName) {
+        var actions = scope.$schema ? scope.$schema.actions : (scope.schema ? scope.schema.actions : false);
 
-                console.log("Performing action - " + actionName);
+        if (scope.$schema && scope.$schema.config[elementName]) {
 
-                var options = angular.extend(angular.copy(action), {
-                    el: elementName,
-                    eventType : $event.type,
-                    action : (action.url || ("/api" + scope.$schema.$metainfo.view + "/" + actionName)),
-                    data : action.requestPath ? scope.model[action.requestPath] : scope.model,
-                    onComplete : action.onComplete || function (data, ops, hasError) {
-                        scope.doParseResponse(data, ops, hasError);
-                    },
-                    time: (new Date()).getTime()
-                });
+            angular.forEach(scope.$schema.config[elementName].actions, function (actionName) {
 
-                var req = action.onBefore ? action.onBefore(options) : scope.doPrepareRequest(options);
-                if (req === false)
+                var action = scope.$schema.actions ? scope.$schema.actions[actionName] : null;
+                if (!action)
                     return;
 
-                scope.$doAction(options);
+                if (actionToExecute && actionToExecute != actionName)
+                    return;
+
+                $scope.$prepareAndExecute(scope, $event, elementName, action, actionName);
             });
         }
+        else if (actions) {
+            angular.forEach(actions, function (action, actionName) {
+
+                if ((isInit === true && action.isInit === true) || (isFetch === true && action.isFetch === true))
+                    $scope.$prepareAndExecute(scope, $event, elementName, action, actionName);
+                
+            });
+        }
+    }
+
+    /**
+     * Do callbacks before 
+     */
+    $scope.$prepareAndExecute = function (scope, $event, elementName, action, actionName) {
+        
+        var options = angular.extend(angular.copy(action), {
+            id: actionName,
+            el: $event.target || elementName,
+            eventType: action.isInit ? 'init' : 'fetch',
+            action: (action.url || ("/api" + scope.schema.$metainfo.view + "/" + actionName)),
+            data: action.requestPath ? scope.model[action.requestPath] : scope.model,
+            onComplete: action.onComplete || function (data, ops, hasError) {
+                scope.doParseResponse(data, ops, hasError);
+
+                if (!hasError) {
+                    $scope.$doPefromAction($event, elementName, scope, action.postAction);
+                }
+            },
+            time: (new Date()).getTime()
+        });
+
+        if (options.params) {
+            var params = {};
+            angular.forEach(options.params, function (param, key) {
+                switch (param.type) {
+                    case 'static':
+                        params[key] = param.value;
+                        break;
+
+                    case "scope":
+                        params[key] = $parse(param.path)(scope);
+                        if (params[key] && param.subpath)
+                            params[key] = params[key][param.subpath];
+                        break;
+
+                    case "model":
+                    default:
+                        params[key] = $parse('model.' + param.path)(scope);
+                        if (params[key] && param.subpath)
+                            params[key] = params[key][param.subpath];
+                        break;
+                }
+            });
+            options.params = params;
+        }
+
+        var req = options.onBefore ? options.onBefore(options) : scope.doPrepareRequest(options);
+        if (req === false)
+            return;
+
+        console.log("Performing action - " + options.action);
+        $scope.$doAction(options);
     }
 
     /************************************************************ Handle REST actions ****************************************************************/
@@ -637,6 +698,9 @@ angular.module('ngViewBuilder', [])
 
         if (!options.headers) {
             options.headers = { 'Authorization': 'cd913947-477d-4a4f-bd17-fd5f062dbc24' };
+        }
+        else {
+            options.headers.Authorization = 'cd913947-477d-4a4f-bd17-fd5f062dbc24';
         }
         return options.data;
     }
@@ -761,7 +825,10 @@ angular.module('ngViewBuilder', [])
             });
         }
 
-        console.log("Time take to execute action '" + options.action + "' is " + ((new Date().getTime()) - options.time )+ " ms")
+        if (!hasError && options.postAction)
+            $scope.$doPefromAction(options.eventType, options.el, scope, options.postAction);
+
+        console.log("Time take to execute action '" + options.action + "' is " + ((new Date().getTime()) - options.time) + " ms")
     }
     /**
     * Destroy scope and leaky objects

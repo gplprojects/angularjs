@@ -5,6 +5,11 @@
         date: 'Generated on dd/mm/yyyy'
     },
 
+    actions: {
+        init1: { isInit: true, processingType: 'ajax', url: '//166.62.16.148/staging/mvc/api/clientmaster/GetClientMasters', type: 'get', responsePath: 'Clients' },
+        search1: { processingType: 'ajax', url: '//166.62.16.148/staging/mvc/api/vesselmaster/GetVesselMastersByFilter', params: { searchText: { path: 'vessel', type: 'model' }, clientId: { path: 'client', subpath:'Id', type: 'model' } }, type: 'get', responsePath: 'Vessels' }
+    },
+
     panels: {
         row1: {
             attr: { class: 'row', style: 'margin: 20px;' },
@@ -37,9 +42,7 @@
                             type: 'button',
                             label: 'Search',
                             attr: { class: 'pull-right', style: "margin-right: 15px;" },
-                            actions: {
-                                save: { processingType:'ajax', url: '//166.62.16.148/staging/mvc/api/clientmaster/GetClientMasters', params: '', type: 'get', takeOnlyDirty: false, responsePath: 'Vessels' }
-                            }
+                            actions: ['search1']
                         }
                     }
                 }
