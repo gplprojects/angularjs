@@ -1,4 +1,3 @@
-
 /**
  * Setting up angular application and list of dependency modules 
  * @ui.router - Angular state provider
@@ -8,7 +7,7 @@
  * @leaflet-directive - Angular directive for leaflet
  * @ui.bootstrap - Angular ported bootstrap 
  */
-window[appName] = angular.module(appName, ['ui.router',
+window[window.appName] = angular.module(window.appName, ['ui.router',
                                            'ngViewBuilder',
                                            'ngGrid',
                                            'angles',
@@ -20,8 +19,8 @@ window[appName] = angular.module(appName, ['ui.router',
 /**
  * Define some of usefull provider to work with lazy loading
  */
-window[appName].config(['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', function ($controllerProvider, $compileProvider, $filterProvider, $provide) {
-    window[appName].register =
+window[window.appName].config(['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', function ($controllerProvider, $compileProvider, $filterProvider, $provide) {
+    window[window.appName].register =
         {
             controller: $controllerProvider.register,
             directive: $compileProvider.directive,

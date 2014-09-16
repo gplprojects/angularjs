@@ -5,6 +5,10 @@
         date: 'Generated on dd/mm/yyyy'
     },
 
+    actions: {
+        login: { processingType: 'ajax', url: '//166.62.16.148/staging/mvc/api/security/authenticateuser', type: 'get', requestPath: 'loginform' }
+    },
+
     panels: {
         container1: {
             attr: { class: 'container' },
@@ -34,9 +38,7 @@
                                                     type: 'button',
                                                     label: 'Login',
                                                     attr: { class: 'pull-right', style: "margin-right: 15px;" },
-                                                    actions: {
-                                                        save: { processingType: 'ajax', url: '//166.62.16.148/staging/mvc/api/security/authenticateuser', params: '', type: 'get', takeOnlyDirty: false, requestPath: 'loginform', responsePath: '', isFilling: false }
-                                                    }
+                                                    actions:['login']
                                                 }
                                             }
                                         }

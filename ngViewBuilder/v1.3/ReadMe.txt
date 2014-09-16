@@ -11,7 +11,27 @@
 	2.3 Instant compiliation
 	2.4 Placeholder added for Text, Select and Text area fields
 	2.5 hideWhen - A expression support for all components
-
+	2.6 Actions - Enhancemet
+		<actionId>: { 
+						type: 'get/post/put/delete/update',//default: get
+						processingType: '<ajax/localstore/nav/(http/angular/$http)>', //default: angular  
+						url: '<Relative or ABS Path>',  //default: '/api/<actionId>'
+						onBefore: <func>, //default: $scope.doPrepareRequest(ops)
+						onComplete: <func>, //default: $scope.doParseResponse(data, ops, hasError)
+						requestPath: '<dataPath>',  //default: ''
+						responsePath:'<dataPath>', //default: ''
+						header: <JSON>, //defsault: null
+						//default: null
+						params: {
+							paramKey {
+								type: '<static/scope/model', //default: model,
+								path: <dataPath> //model.<dataPath> or $scope.<dataPath>
+								subpath: '' //get subpath values form parsed path value
+							}
+						},
+						postAction: <ActionID> //default: '' - OnComplete of current action execute another action
+					}
+	2.7 Added UTC (Karma + Jasmine)
 /****************************************************************************************************************************************************************/
 List of open sources we use
 ===========================

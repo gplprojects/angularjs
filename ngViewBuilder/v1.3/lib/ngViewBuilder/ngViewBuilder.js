@@ -649,10 +649,6 @@ angular.module('ngViewBuilder', [])
             data: action.requestPath ? scope.model[action.requestPath] : scope.model,
             onComplete: action.onComplete || function (data, ops, hasError) {
                 scope.doParseResponse(data, ops, hasError);
-
-                if (!hasError) {
-                    $scope.$doPefromAction($event, elementName, scope, action.postAction);
-                }
             },
             time: (new Date()).getTime()
         });
@@ -754,24 +750,15 @@ angular.module('ngViewBuilder', [])
             contentType: 'application/json; charset=utf-8'
         });
         
-        switch (options.type) {
-            case "post":
-                $.ajax({
-                    url: options.action,
-                    data: options.data,
-                    type: options.type,
-                    params: options.params ? options.params : {} //To Do: Check params are working?
-                });
-                break;
+        if (!options.type || options.type.toLowerCase() == 'get')
+            delete options.data;;
 
-            default:
-                $.ajax({
-                    url: options.action,
-                    data: options.params,
-                    type: options.type,
-                });
-                break;
-        }
+        $.ajax({
+            url: options.action,
+            data: options.data,
+            type: options.type,
+            params: options.params ? options.params : {}
+        });
     }
 
     /**
@@ -810,7 +797,7 @@ angular.module('ngViewBuilder', [])
     $scope.$interceptResponse = function (data, options, hasError) {
     
         if (options.el) {
-            var scope = angular.element('#' + options.el).scope();
+            var scope = angular.element(typeof options.el == 'string' ?  '#' + options.el  : options.el).scope();
             if (data && options.responsePath)
                 scope.model[options.responsePath] = data;
         }

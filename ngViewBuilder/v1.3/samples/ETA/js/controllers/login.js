@@ -2,9 +2,8 @@
     
     $scope.doPrepareRequest = function (options) {
         
-    
-        //To Do: Write req 
-        return options.data; //Don't use generic functionality
+        options.params = options.data;
+        return options.data;
     }
 
     $scope.doParseResponse = function (data, ops, hasError) {
