@@ -619,18 +619,18 @@ angular.module('ngViewBuilder', [])
                 var action = scope.$schema.actions ? scope.$schema.actions[actionName] : null;
                 if (!action)
                     return;
-
-                if (actionToExecute && actionToExecute != actionName)
+                
+                if (actionToExecute && actionToExecute != (action.name || actionName))
                     return;
 
-                $scope.$prepareAndExecute(scope, $event, elementName, action, actionName);
+                $scope.$prepareAndExecute(scope, $event, elementName, action, (action.name || actionName));
             });
         }
         else if (actions) {
             angular.forEach(actions, function (action, actionName) {
 
                 if ((isInit === true && action.isInit === true) || (isFetch === true && action.isFetch === true))
-                    $scope.$prepareAndExecute(scope, $event, elementName, action, actionName);
+                    $scope.$prepareAndExecute(scope, $event, elementName, action, (action.name || actionName));
                 
             });
         }
@@ -645,7 +645,7 @@ angular.module('ngViewBuilder', [])
             id: actionName,
             el: $event.target || elementName,
             eventType: action.isInit ? 'init' : 'fetch',
-            action: (action.url || ("/api" + scope.schema.$metainfo.view + "/" + actionName)),
+            action: (action.url || ("/api/" + (action.name || actionName))),
             data: action.requestPath ? scope.model[action.requestPath] : scope.model,
             onComplete: action.onComplete || function (data, ops, hasError) {
                 scope.doParseResponse(data, ops, hasError);

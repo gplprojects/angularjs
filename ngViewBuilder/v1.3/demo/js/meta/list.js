@@ -4,6 +4,10 @@
         version: '1.0',
         date: 'Generated on dd/mm/yyyy'
     },
+    actions: {
+        save: { name: 'list/save', type: 'post'},
+        fetch: { name:'list/fetch', type: 'get'}
+    },
 
     options: {
         'gender': [{ key: 'M', value: 'Male' }, { key: 'F', value: 'Female' }]
@@ -115,10 +119,7 @@
                                             label: 'Submit',
                                             handle: 'handleUIEvents',
                                             attr: {class: 'pull-right', style: "margin-right: 15px;"},
-                                            actions: {
-                                                save: { params: '', type: 'post', takeOnlyDirty: false, requestPath: '', responsePath: '', isFilling: false },
-                                                fetch: { params: '', type: 'get', requestPath: '', responsePath: '', isFilling: false }
-                                            }
+                                            actions: ['save', 'fetch']
                                         }
                                     }
                                 } //End of Gen Info

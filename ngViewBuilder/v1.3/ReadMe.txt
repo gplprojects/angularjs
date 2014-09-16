@@ -13,6 +13,7 @@
 	2.5 hideWhen - A expression support for all components
 	2.6 Actions - Enhancemet
 		<actionId>: { 
+						name: '<actionName>' //Optional default: actionId
 						type: 'get/post/put/delete/update',//default: get
 						processingType: '<ajax/localstore/nav/(http/angular/$http)>', //default: angular  
 						url: '<Relative or ABS Path>',  //default: '/api/<actionId>'

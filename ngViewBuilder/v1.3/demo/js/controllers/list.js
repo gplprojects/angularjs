@@ -1,4 +1,4 @@
-﻿function listController($scope, $compile) {
+﻿function listController($scope) {
     
     $scope.model = {
                 grid: [{ name: "Moroni", age: 50 },
