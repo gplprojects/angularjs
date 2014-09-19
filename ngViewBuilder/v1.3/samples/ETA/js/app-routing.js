@@ -14,11 +14,11 @@ window[appName].config(['$stateProvider', '$urlRouterProvider', function ($state
     $stateProvider
         .state('login', {
             url: '/login',
-            template: viewTemplate.replace(/{{view}}/g, 'login'),
+            template: '<ng-view-build schema="js/meta/login.js" view="login" async="false" replace="true"></ng-view-build>', 
             controller: 'loginController',
             resolve: {
                 load: ['$ngViewLoader', function ($ngViewLoader) {
-                    return $ngViewLoader.load('login', '../js/controllers/login', 'loginController', false);
+                    return $ngViewLoader.load('login', '../js/controllers/login', 'loginController', true);
                 }]
             }
         })

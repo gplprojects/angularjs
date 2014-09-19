@@ -33,6 +33,7 @@
 						postAction: <ActionID> //default: '' - OnComplete of current action execute another action
 					}
 	2.7 Added UTC (Karma + Jasmine)
+	2.8 Directive support and minor improvements
 /****************************************************************************************************************************************************************/
 List of open sources we use
 ===========================

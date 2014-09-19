@@ -29,6 +29,7 @@ requirejs.config({
         /* Optional libs */
         'ng-gird': window.appPath.lib + 'grid/nggrid/ng-grid.debug',
         'ng-gird-layout': window.appPath.lib + 'grid/nggrid/ng-grid-layout',
+        'ui-gird': window.appPath.lib + 'grid/uigrid/ui-grid-unstable',
         'chartjs': window.appPath.lib + 'charts/chartjs/chart',
         'angles': window.appPath.lib + 'charts/chartjs/angles',
         'higncharts-all': window.appPath.lib + 'charts/highcharts/highcharts-all',
@@ -45,7 +46,7 @@ requirejs.config({
         'angular-ui.router': { deps: ['angular'] },
         'angles': { deps: ['chartjs'] },
         'angular-leaflet-directive': {deps: ['leaflet']},
-        'app': { deps: ['angular-ui.router', 'ng-view-builder', 'ui.bootstrap', 'ng-gird', 'ng-gird-layout', 'angles', 'higncharts-all', 'highcharts-ng', 'angular-leaflet-directive'] },
+        'app': { deps: ['angular-ui.router', 'ng-view-builder', 'ui.bootstrap', 'ng-gird', 'ng-gird-layout', 'ui-gird', 'angles', 'higncharts-all', 'highcharts-ng', 'angular-leaflet-directive'] },
         'app-routing': { deps: ['app'] },
     }
 });

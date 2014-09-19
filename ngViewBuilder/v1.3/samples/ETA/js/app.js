@@ -11,6 +11,7 @@
 window[appName] = angular.module(appName, ['ui.router',
                                            'ngViewBuilder',
                                            'ngGrid',
+                                           'ui.grid',
                                            'angles',
                                            'leaflet-directive',
                                            'ui.bootstrap',

@@ -8,6 +8,45 @@ angular.module('ngViewBuilder', [])
  */
 .run(['$q', '$ngViewUtility', function ($q, $ngViewUtility) {
     
+    //Preload and cache large templates
+
+}])
+
+.directive('ngViewBuild', ['$ngViewLoader', '$ngViewBuilder', function ($ngViewLoader, $ngViewBuilder) {
+    return {
+        restrict: 'EAC',
+        link: function (scope, elm, attr, ctrl) {
+            var schema = attr['schema'], viewname = attr["view"], async = attr['async'], replace = attr['replace'];
+
+            schema = scope.$eval(schema) || schema;
+            viewname = scope.$eval(viewname) || viewname;
+            async = scope.$eval(async) || async;
+           
+            if (replace == 'true') {
+                var pelm = elm.parent();
+                elm.remove();
+            }
+
+            if (typeof schema == 'string') {
+                $ngViewLoader.loadMeta(null, function (meta) { build(meta); }, null, schema, (async === true || async === 'true'));
+            }
+            else if (schema && typeof schema == 'object') {
+                build(schema);
+            }
+
+            function build(meta) {
+                meta = typeof meta === 'string' ? eval(meta) : meta;
+                if (meta && meta.panels) {
+                    var start = new Date();
+
+                    $ngViewBuilder.build(scope, meta, (attr['id'] || attr['name']), replace == 'true' ? pelm : elm);
+
+                    var end = new Date();
+                    console.log("Total time taken to render partial / view '" + (viewname || meta.metainfo.view) + "' is '" + (end.getTime() - start.getTime()) + " ms'");
+                }
+            }
+        }
+    }
 }])
 
 /**
@@ -187,18 +226,37 @@ angular.module('ngViewBuilder', [])
     /**
      * Load view meta data and used for rendering dynamic view
      */
-    this.loadMeta = function (viewName, callback, metaPath) {
+    this.loadMeta = function (viewName, callback, metaPath, url, sync) {
+        url = url || ((metaPath ? metaPath: 'js/meta') + '/' + viewName + '.js');
+
+        //sync load
+        if (sync === true) {
+            $.ajax({
+                type: "GET",
+                url: url,
+                async: false,
+                contentType: 'application/json'
+            })
+            .success(callback)
+            .error(function () {
+                $log.warn("ngViewLoader - loadMeta: Failed load metadata '" + url + "'");
+                callback();
+            });
+            return;
+        }
+
+        //async load
         $http({
-            url: (metaPath ? metaPath: 'js/meta') + '/' + viewName + '.js',
-            method: "GET",
-            contentType: 'application/json'
-        })
-       .success(callback)
-       .error(function () {
-           $log.warn("ngViewLoader - loadMeta: Failed load metadata for the view '" + viewName + "'");
-           callback();
-       });
-    }
+                url: url,
+                method: "GET",
+                contentType: 'application/json'
+            })
+           .success(callback)
+           .error(function () {
+               $log.warn("ngViewLoader - loadMeta: Failed load metadata '" + url + "'");
+               callback();
+           });
+        }
 }])
 
 /**
@@ -217,8 +275,9 @@ angular.module('ngViewBuilder', [])
      * API exposed to module controller to build view
      * scope (angular scope) - Should be actual scope of controller
      */
-    this.build = function (scope) {
-        if (!scope.schema)
+    this.build = function (scope, schema, rootElName, rootEl) {
+        schema = schema || scope.schema;
+        if (!schema)
             return;
 
         if (!scope.model)
@@ -235,14 +294,19 @@ angular.module('ngViewBuilder', [])
 
         if (!scope.$temp)
             scope.$temp = {};
-        scope.$schema.actions = scope.schema.actions;
-        scope.$schema.$metainfo = scope.schema.metainfo || { view: scope.schema.view};
 
-        var rootElName = scope.$schema.elName || (scope.$schema.$metainfo.view ? 'screen-' + scope.$schema.$metainfo.view : false);
-        var rootEl = angular.element(rootElName ? '#' + rootElName : document.body);
+        scope.$schema.options = angular.extend(scope.$schema.options, schema.options);
+        
+        scope.$schema.actions = angular.extend((scope.$schema.actions|| {}), schema.actions);
+        scope.$schema.$metainfo = scope.$schema.$metainfo || schema.metainfo || { view: schema.view };
+
+        if (!rootEl) {
+            rootElName = rootElName || scope.$schema.elName || ('screen-' + (schema.metainfo.view || scope.$schema.$metainfo.view));
+            rootEl = angular.element(rootElName ? '#' + rootElName : document.body);
+        }
         
         try {
-            buildInternal(scope, scope.schema, scope.schema, rootEl, scope.model);
+            buildInternal(scope, schema, schema, rootEl, scope.model);
             angular.element(".progress").css('display', 'none');
         }
         catch (e) {
@@ -475,9 +539,6 @@ angular.module('ngViewBuilder', [])
         var templateType = control.template || control.type;
 
         control.handle = control.handle || 'handleViewEvents';
-
-        if (scope.schema.options && scope.schema.options[control.name])
-            scope.$schema.options[control.name] = scope.schema.options[control.name];
 
         var modelPath = getModel(control, model, (control.type != 'button' && control.noBind !== true), null);
         if (model && modelPath) {

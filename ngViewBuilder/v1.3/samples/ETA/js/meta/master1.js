@@ -57,8 +57,8 @@
                     children: {
                                 grid1: {
                                     type: 'gridpanel',
-                                    template: 'ng-grid',
-                                    controltype: 'ng-grid',
+                                    template: 'ui-grid',
+                                    controltype: 'ui-grid',
                                     model:'Vessels',
                                     config: {
                                         columnDefs: [
