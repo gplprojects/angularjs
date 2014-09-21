@@ -11,44 +11,32 @@
 
     panels: {
         container1: {
-            attr: { class: 'container' },
+            attr: { class: 'container', style:'margin-top:10%;' },
             children: {
-                row1: {
-                    attr: { class: 'row' },
-                    children: {
-                        column0: {
-                            attr: { class: 'span4 offset4' },
-                            children: {
-                                overview: {
-                                    type: 'panel',
-                                    children: {
-                                        loginform: {
-                                            type: 'form',
-                                            children: {
-                                                loginname: {
-                                                    type: 'text',
-                                                    label: 'Username'
-                                                },
-                                                loginpassword: {
-                                                    type: 'password',
-                                                    template: 'text',
-                                                    label: 'Password'
-                                                },
-                                                button1: {
-                                                    type: 'button',
-                                                    label: 'Login',
-                                                    attr: { class: 'pull-right', style: "margin-right: 15px;" },
-                                                    actions:['login']
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                loginform: {
+                        type: 'form',
+                        attr: { class: 'form-horizontal', style:'max-width:350PX; margin: 0 auto;' },
+                        children: {
+                            loginname: {
+                                cls:'col-sm-9',
+                                type: 'text',
+                                label: 'Username'
+                            },
+                            loginpassword: {
+                                cls: 'col-sm-9',
+                                type: 'password',
+                                template: 'text',
+                                label: 'Password'
+                            },
+                            button1: {
+                                type: 'button',
+                                label: 'Login',
+                                attr: { class: 'pull-right' },
+                                actions:['login']
                             }
                         }
                     }
                 }
             }
         }
-    }
 }
