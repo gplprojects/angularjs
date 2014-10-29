@@ -4,7 +4,10 @@
         version: '1.0',
         date: 'Generated on dd/mm/yyyy'
     },
-
+    actions: {
+        save: { params: '', processingType:"", type: 'post', takeOnlyDirty: false, requestPath: '', responsePath: '', isFilling: false },
+        back: { params: '', processingType: "nav", type: 'post', path: '/tracker' }
+    },
     panels: {
         row1: {
             attr: { class: 'row' },
@@ -59,18 +62,14 @@
                                             label: 'Save',
                                             handle: 'handleUIEvents',
                                             attr: { class: 'pull-right', style: "margin-right: 15px;" },
-                                            actions: {
-                                                save: { params: '', type: 'post', takeOnlyDirty: false, requestPath: '', responsePath: '', isFilling: false }
-                                            }
+                                            actions: ['save']
                                         },
                                         button2: {
                                             type: 'button',
                                             label: 'Back',
                                             handle: 'handleUIEvents',
                                             attr: { class: 'pull-right', style: "margin-right: 15px;" },
-                                            actions: {
-                                                back: { params: '', processingType: 'nav', path: '#/tracker', onBefore: function () { return true;} }
-                                            }
+                                            actions: ['back']
                                         }
                                     }
                                 }

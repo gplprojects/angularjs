@@ -621,7 +621,7 @@ angular.module('ngViewBuilder', [])
             scope.afterRender(control.id, control, fieldEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
         return;
     }
-}]).controller('$viewBuilderController', ['$rootScope', '$scope', '$http', '$ngViewBuilder', '$ngViewLoader', '$location', '$parse', function ($rootScope, $scope, $http, $ngViewBuilder, $ngViewLoader, $location, $parse) {
+}]).controller('$viewBuilderController', ['$rootScope', '$scope', '$http', '$ngViewBuilder', '$ngViewLoader', '$location', '$parse', '$window', function ($rootScope, $scope, $http, $ngViewBuilder, $ngViewLoader, $location, $parse, $window) {
 
     //Keep something in global (i.e.,not in $rootScope)
     $scope.meta = {

@@ -13,6 +13,9 @@
 
     $scope.doPrepareRequest = function (options) {
         
+        if (options.id == 'back')
+            return true;
+
         //To Do: Add date field
         if (!$scope.model.expenseform.category && $scope.model.expenseform.newcategory) {
             $scope.model.expenseform.category = {
