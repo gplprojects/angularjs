@@ -10,6 +10,7 @@
                 ng-change="{{handle}}($event, '{{name}}', 'change');"
                 ng-focus="{{handle}}($event, '{{name}}', 'focus');"
                 ng-blur="{{handle}}($event, '{{name}}', 'blur');" />
+
         <select class="form-control field-{{type}}" ng-if="angular.isArray({{optionsKey}})"
                 id="{{name}}"
                 name="{{name}}"

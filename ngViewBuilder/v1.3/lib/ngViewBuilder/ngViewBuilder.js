@@ -540,7 +540,7 @@ angular.module('ngViewBuilder', [])
 
         control.handle = control.handle || 'handleViewEvents';
 
-        var modelPath = getModel(control, model, (control.type != 'button' && control.noBind !== true), null);
+        var modelPath = getModel(control, model, (control.type != 'button' && control.noBind !== true), typeof control.defaultValue != 'undefined' ? control.defaultValue : null);
         if (model && modelPath) {
             model[modelPath] = model[modelPath] || null;
             control.dataPath += (control.dataPath ? "." : "") + modelPath;

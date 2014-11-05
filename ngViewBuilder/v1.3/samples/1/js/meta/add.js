@@ -4,6 +4,9 @@
         version: '1.0',
         date: 'Generated on dd/mm/yyyy'
     },
+    options: {
+        credittype: [{ id: '-', desc: 'Debit' }, { id: '+', desc: 'Credit' }]
+    },
     actions: {
         save: { params: '', processingType:"", type: 'post', takeOnlyDirty: false, requestPath: '', responsePath: '', isFilling: false },
         back: { params: '', processingType: "nav", type: 'post', path: '/tracker' }
@@ -34,6 +37,13 @@
                                             label: '',
                                             placeholder: 'Please choose category or create new',
                                             hideWhen: "model.expenseform.category && model.expenseform.category.id"
+                                        },
+                                        credittype: {
+                                            type: 'select',
+                                            label: 'Credit Type',
+                                            optionKey : 'id',
+                                            optionValue: 'desc',
+                                            defaultValue: '-'
                                         },
                                         amount: {
                                             type: 'number',
