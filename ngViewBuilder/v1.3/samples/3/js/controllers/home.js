@@ -1,4 +1,4 @@
-﻿function homeController($scope) {
+﻿function homeController($scope, $location) {
     
     $scope.doPrepareRequest = function (options) {
         
@@ -12,6 +12,7 @@
     }
 
     this.$init($scope);
+    //$location.open('#/home/list')
 }
 
 //Required to support minification https://code.angularjs.org/1.2.22/docs/tutorial/step_05

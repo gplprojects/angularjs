@@ -446,11 +446,24 @@ angular.module('ngViewBuilder', [])
                         scope.$schema.config[control.name].selectedItems = scope.$temp[control.name].selectedItesm;
                         scope.$schema.config[control.name].plugins = [ngGridLayoutPlugin];
                     }
+                    
+                    /*
+                    scope.$watch("model['" + (dataPath ? dataPath : (control.model || control.name)) + "']", function (newValue, oldValue) {
+                        if (newValue != oldValue)
+                            scope.$schema.config[control.name].data = newValue;
+                    }, true);
+                    */
                     break
 
             case "chartpanel":
                 control.config.height = control.config.height || '98%';
                 control.config.width = control.config.width || '98%';
+
+                scope.$watch("model['" + (dataPath ? dataPath : (control.model || control.name)) + "']", function (newValue, oldValue) {
+                    if (newValue != oldValue)
+                        scope.$schema.config[control.name].series[0].data = newValue;
+                }, true);
+
                 break;
 
             case "mappanel":
@@ -492,6 +505,9 @@ angular.module('ngViewBuilder', [])
         if (control.compile)
             $compile(panelEl.contents())(scope);
 
+        if (typeof control.afterRender === 'function')
+            control.afterRender(scope, control, panelEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
+
         if (typeof scope.afterRender === 'function')
             scope.afterRender(control.id, control, panelEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
 
@@ -514,8 +530,11 @@ angular.module('ngViewBuilder', [])
 
         addAttributes(control, formEl);
 
+        if (typeof control.afterRender === 'function')
+            control.afterRender(scope, control, fromEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
+
         if (typeof scope.afterRender === 'function')
-            scope.afterRender(control.id, control, formEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
+            scope.afterRender(control.id, control, formEl, scope.$schema.config[control.name], scope.$schema.options[control.name], scope);
 
         if (control.children) {
             angular.forEach(control.children, function (childObject, childName) {
@@ -617,8 +636,11 @@ angular.module('ngViewBuilder', [])
         parentEl.append(fieldEl);
         addAttributes(control, angular.element('#' + control.id, parentEl));
 
+        if (typeof control.afterRender === 'function')
+            control.afterRender(scope, control, fieldEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
+
         if (typeof scope.afterRender === 'function')
-            scope.afterRender(control.id, control, fieldEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
+            scope.afterRender(control.id, control, fieldEl, scope.$schema.config[control.name], scope.$schema.options[control.name], scope);
         return;
     }
 }]).controller('$viewBuilderController', ['$rootScope', '$scope', '$http', '$ngViewBuilder', '$ngViewLoader', '$location', '$parse', '$window', function ($rootScope, $scope, $http, $ngViewBuilder, $ngViewLoader, $location, $parse, $window) {
@@ -673,7 +695,14 @@ angular.module('ngViewBuilder', [])
 
         var actions = scope.$schema ? scope.$schema.actions : (scope.schema ? scope.schema.actions : false);
 
-        if (scope.$schema && scope.$schema.config[elementName]) {
+        if (actions) {
+            angular.forEach(actions, function (action, actionName) {
+
+                if ((isInit === true && action.isInit === true) || (isFetch === true && action.isFetch === true) || (actionToExecute && actionToExecute === (action.name || actionName)))
+                    $scope.$prepareAndExecute(scope, $event, elementName, action, (action.name || actionName));
+            });
+        }
+        else if (scope.$schema && scope.$schema.config[elementName]) {
 
             angular.forEach(scope.$schema.config[elementName].actions, function (actionName) {
 
@@ -687,14 +716,6 @@ angular.module('ngViewBuilder', [])
                 $scope.$prepareAndExecute(scope, $event, elementName, action, (action.name || actionName));
             });
         }
-        else if (actions) {
-            angular.forEach(actions, function (action, actionName) {
-
-                if ((isInit === true && action.isInit === true) || (isFetch === true && action.isFetch === true))
-                    $scope.$prepareAndExecute(scope, $event, elementName, action, (action.name || actionName));
-                
-            });
-        }
     }
 
     /**
@@ -704,12 +725,16 @@ angular.module('ngViewBuilder', [])
         
         var options = angular.extend(angular.copy(action), {
             id: actionName,
-            el: $event.target || elementName,
+            el: $event ? $event.target : elementName,
             eventType: action.isInit ? 'init' : 'fetch',
             action: (action.url || ("/api/" + (action.name || actionName))),
             data: action.requestPath ? scope.model[action.requestPath] : scope.model,
             onComplete: action.onComplete || function (data, ops, hasError) {
-                scope.doParseResponse(data, ops, hasError);
+                if (scope.doParseResponse)
+                    scope.doParseResponse(data, ops, hasError);
+                else
+                    console.log("ngViewLoader - onComplete: Not implemented");
+                    
             },
             time: (new Date()).getTime()
         });
@@ -739,7 +764,7 @@ angular.module('ngViewBuilder', [])
             options.params = params;
         }
 
-        var req = options.onBefore ? options.onBefore(options) : scope.doPrepareRequest(options);
+        var req = options.onBefore ? options.onBefore(scope, options) : scope.doPrepareRequest(options);
         if (req === false)
             return;
 
@@ -753,12 +778,12 @@ angular.module('ngViewBuilder', [])
      */
     $scope.$interceptRequest = function (options) {
 
-        if (!options.headers) {
+        /*if (!options.headers) {
             options.headers = { 'Authorization': 'cd913947-477d-4a4f-bd17-fd5f062dbc24' };
         }
         else {
             options.headers.Authorization = 'cd913947-477d-4a4f-bd17-fd5f062dbc24';
-        }
+        }*/
         return options.data;
     }
 
@@ -859,12 +884,20 @@ angular.module('ngViewBuilder', [])
     
         if (options.el) {
             var scope = angular.element(typeof options.el == 'string' ?  '#' + options.el  : options.el).scope();
-            if (data && options.responsePath)
-                scope.model[options.responsePath] = data;
+            
+        }
+
+        if (scope) {
+            var result = data;
+            if (options.resultPath)
+                data = eval("result" + options.resultPath);
+
+            if (options.resultModelPath)
+                scope.model[options.resultModelPath] = data;
         }
 
         if (options['onComplete'])
-            options['onComplete'](data, options, hasError);
+            options['onComplete'](scope, data, options, hasError);
 
         if (ngGridLayoutPlugin && scope && scope.$schema.config) {
             angular.forEach(scope.$schema.config, function (conf, gridName) {

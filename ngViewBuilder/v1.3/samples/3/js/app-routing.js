@@ -10,7 +10,7 @@ window[appName].config(['$stateProvider', '$urlRouterProvider', function ($state
 	 * Read more on http://scotch.io/tutorials/javascript/angular-routing-using-ui-router
 	 **/
     //Used for ui-view (Nested views)
-    $urlRouterProvider.otherwise('/login');
+    $urlRouterProvider.otherwise('/list');
     $stateProvider
         .state('login', {
             url: '/login',
@@ -31,31 +31,22 @@ window[appName].config(['$stateProvider', '$urlRouterProvider', function ($state
                     return $ngViewLoader.load('home', '../js/controllers/home', 'homeController', true);
                 }]
             }
-        }).state('home.master1', {
-            url: '/master1',
-            template: viewTemplate.replace(/{{view}}/g, 'master1'),
-            controller: 'master1Controller',
+        }).state('home.list', {
+            url: '/list',
+            templateUrl: 'views/list.html',
+            controller: 'listController',
             resolve: {
                 load: ['$ngViewLoader', function ($ngViewLoader) {
-                    return $ngViewLoader.load('master1', '../js/controllers/master1', 'master1Controller', false);
+                    return $ngViewLoader.load('list', '../js/controllers/list', 'listController', true);
                 }]
             }
-        }).state('home.master2', {
-            url: '/master2',
-            template: viewTemplate.replace(/{{view}}/g, 'master2'),
-            controller: 'master2Controller',
+        }).state('home.detail', {
+            url: '/detail',
+            templateUrl: 'views/detail.html',
+            controller: 'detailController',
             resolve: {
                 load: ['$ngViewLoader', function ($ngViewLoader) {
-                    return $ngViewLoader.load('master2', '../js/controllers/master2', 'master2Controller', true);
-                }]
-            }
-        }).state('home.master3', {
-            url: '/master3',
-            template: viewTemplate.replace(/{{view}}/g, 'master3'),
-            controller: 'master3Controller',
-            resolve: {
-                load: ['$ngViewLoader', function ($ngViewLoader) {
-                    return $ngViewLoader.load('master3', '../js/controllers/master3', 'master3Controller', true);
+                    return $ngViewLoader.load('detail', '../js/controllers/detail', 'detailController', true);
                 }]
             }
         });

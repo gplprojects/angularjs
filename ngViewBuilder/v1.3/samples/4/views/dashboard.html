@@ -1,0 +1,68 @@
+﻿<div class="content_wrapper">
+    <div class="logo"><a href="#home"><img src="assets/images/logo.png" /></a></div>
+    <div class="mobile_menu_toggle"><a class="icon_arrow_down">Menu</a></div>
+    <ul class="sidenav">
+        <li class="folder">
+            <a ui-sref=".overview">SC Monitoring</a>
+            <ul>
+                <li><a ui-sref=".overview">Overview</a></li>
+            </ul>
+        </li>
+        <li class="folder">
+            <a ui-sref=".ap_dashboard">AP</a>
+            <ul>
+                <li><a href=".ap_dashboard">Dashboard</a></li>
+                <li><a href=".ap_list">List</a></li>
+            </ul>
+        </li>
+        <li class="folder">
+            <a href="#">Station</a>
+            <ul>
+                <li><a href="#station_dashboard">Dashboard</a></li>
+                <li><a href="#station_list">List</a></li>
+            </ul>
+        </li>
+        <li class="folder">
+            <a href="#">APP RF</a>
+            <ul>
+                <li><a href="#app_rf_dashboard">Dashboard</a></li>
+                <li><a href="#app_rf_list">List</a></li>
+            </ul>
+        </li>
+        <li class="folder">
+            <a href="#">WebCC</a>
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">List</a></li>
+            </ul>
+        </li>
+        <li class="folder">
+            <a href="#">Inline Monitoring</a>
+            <ul>
+                <li><a href="#im_overview">Overview</a></li>
+                <li><a href="#">Deauth Reasons</a></li>
+                <li><a href="#">DNS Status</a></li>
+            </ul>
+        </li>
+        <li class="folder">
+            <a href="#">Authentication</a>
+            <ul>
+                <li><a href="#">Overview</a></li>
+                <li><a href="#">.1x</a></li>
+                <li><a href="#">MAC</a></li>
+                <li><a href="#">CP</a></li>
+                <li><a href="#">WPA Status</a></li>
+            </ul>
+        </li>
+        <li> <a href="#location">Location</a> </li>
+    </ul>
+    <div class="main">
+        <div class="title_bar title_Bar_padding">
+            <span></span>
+            <h1>Aruba - Monitoring Framework</h1>
+        </div>
+        <div class="content">
+            <div ui-view></div>
+        </div>
+    </div>
+</div>
