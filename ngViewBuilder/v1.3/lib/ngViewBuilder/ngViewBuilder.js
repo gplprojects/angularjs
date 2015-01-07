@@ -462,7 +462,7 @@ angular.module('ngViewBuilder', [])
                 scope.$watch("model['" + (dataPath ? dataPath : (control.model || control.name)) + "']", function (newValue, oldValue) {
                     if (newValue != oldValue)
                         scope.$schema.config[control.name].series[0].data = newValue;
-                }, true);
+                });
 
                 break;
 

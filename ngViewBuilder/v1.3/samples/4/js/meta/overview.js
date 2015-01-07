@@ -45,12 +45,12 @@
             },
             onComplete: function (scope, data) {
                 console.log(data);
-                scope.model.traffic = [];
+                var traffic = [];
                 for (var i = 0; i < data.facets[0].entries.length; i++) {
                     var item = data.facets[0].entries[i];
-                    scope.model.traffic.push([new Date(item.time), item.count]);
+                    traffic.push([item.time, item.count]);
                 }
-                
+                scope.model.traffic = traffic;
             }
         }
     },
