@@ -1,14 +1,57 @@
-﻿<div class="well" style="height:75px">
+﻿<!--
+<div class="well" style="height:75px">
     
     <div class="btn-group pull-right" role="group" aria-label="..." ng-hide="true">
         <button type="button" class="btn btn-default">Splunk</button>
         <button type="button" class="btn btn-default">Elastic</button>
     </div>
     
-    <input type="text" class="form-control col-lg-12" placeholder="Search for..." style="margin-top:5px;">
+    <input type="text" placeholder="Search for..." style="margin-top:5px; width:100%;" ng-model="model.userQueryText" ng-keyup="lookUp($event)">
 
-    <ul class="dropdown-menu pull-right" role="menu" aria-label="All Time">
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Regular link</a></li>
-    </ul>
+</div>
+-->
 
+<div class="content">
+    <div class="divForSearchText">
+        <input type="text" ng-model="model.userQueryText" ng-change="showSuggestion = false" ng-keyup="Test($event)" placeholder="enter search here..." style="width:100%"></input>
+        <div ng-model="divForSuggestion" ng-show="showSuggestion" style="width:100%">
+            <select multiple class="select2" style="width:100%;height:300px;">
+                <optgroup label="Matching Terms">
+                    <option ng-repeat="suggestion in arrayOfSuggestions" ng-click="selectValue($index)" style="color:black">{{suggestion}}</option>
+                </optgroup>
+            </select>
+        </div>
+    </div>
+    <div style="width:100%;height:80%;margin-top:30px;">
+        <div class="panel_wrapper" style="display:inline;width:20%;height:80%;float:left">
+            <div class="panel table rounded white no_pad">
+                <div class="title_heading">Fields</div>
+                <div class="table_wrapper">
+                    <table class="data responsive" style="width:100%">
+                        <tbody>
+                            <tr ng-repeat="fields in arrayOfFields">
+                                <td>{{fields}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="panel_wrapper" style="display:inline;width:78%;height:80%;float:left;margin-left:2%">
+            <div class="panel table rounded white no_pad">
+                <div class="title_heading">Raw Data</div>
+                <div class="table_wrapper">
+                    <table class="data responsive" style="width:100%">
+                        <tbody>
+                            <tr ng-repeat="message in arrayForRawData">
+                                <td>{{message}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div data-pagination="" data-num-pages="numPages()" data-current-page="currentPage" data-max-size="maxSize" data-boundary-links="true"></div>
+        </div>
+    </div>
+    <div ng-view></div>
 </div>

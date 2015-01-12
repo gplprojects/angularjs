@@ -29,9 +29,10 @@ window[appName].config(['$stateProvider', '$urlRouterProvider', function ($state
     $stateProvider.state(appName + '.dashboard', {
         url: '/dashboard',
         templateUrl: 'views/dashboard.html',
+        controller: 'lookupController',
         resolve: {
             load: ['$ngViewLoader', function ($ngViewLoader) {
-                return $ngViewLoader.load('dashboard', '', '', false);
+                return $ngViewLoader.load('lookup', '../js/controllers/lookup', 'lookupController', true);
             }]
         }
     });

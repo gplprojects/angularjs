@@ -196,6 +196,10 @@ angular.module('ngViewBuilder', [])
                 controller.prototype.$metaInfo = { view: viewName, controller: controllerName, controllerSrc: uri, loadedBy: 'loader' };
                 //Init
                 controller.prototype.$init = function (scope, initCallback, callBack) {
+                    //Set meta information
+                    scope.$appName = appName;
+                    scope.$metainfo = this.$metainfo;
+
                     if (skipRendering === true) {
                         $log.info("ngViewBuilder - $init: User has set true to skip view building '" + controllerName + "' and view name '" + viewName + "'");
                         return;
@@ -729,7 +733,7 @@ angular.module('ngViewBuilder', [])
             eventType: action.isInit ? 'init' : 'fetch',
             action: (action.url || ("/api/" + (action.name || actionName))),
             data: action.requestPath ? scope.model[action.requestPath] : scope.model,
-            onComplete: action.onComplete || function (data, ops, hasError) {
+            onComplete: action.onComplete || function (scope, data, ops, hasError) {
                 if (scope.doParseResponse)
                     scope.doParseResponse(data, ops, hasError);
                 else
@@ -899,7 +903,7 @@ angular.module('ngViewBuilder', [])
         if (options['onComplete'])
             options['onComplete'](scope, data, options, hasError);
 
-        if (ngGridLayoutPlugin && scope && scope.$schema.config) {
+        if (ngGridLayoutPlugin && scope && scope.$schema && scope.$schema.config) {
             angular.forEach(scope.$schema.config, function (conf, gridName) {
                 if (conf.plugins && conf.plugins.ngGridLayoutPlugin)
                     conf.plugins.ngGridLayoutPlugin.updateGridLayout();

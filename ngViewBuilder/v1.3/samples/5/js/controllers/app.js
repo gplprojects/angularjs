@@ -1,8 +1,8 @@
 ﻿function appController($scope) {
     
     $scope.model = { dashboards: [] };
-    $scope.appName =appName;
-
+    
+    //To Do: Get it from backend
     for (var i = 0; i < 5; i++) {
         $scope.model.dashboards.push({name:'dashboard_' + i, description: "Dashboard " + i});
     }
