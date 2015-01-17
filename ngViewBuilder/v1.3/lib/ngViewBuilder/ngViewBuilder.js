@@ -362,6 +362,27 @@ angular.module('ngViewBuilder', [])
     /**
      * Generic method - will redirects based on type
      */
+    this.buildControl = function (scope, control, parentEl, dataPath, model) {
+
+        if (!scope.$schema)
+            scope.$schema = { options: {}, config: {} };
+        else {
+            if (!scope.$schema.options)
+                scope.$schema.options = {};
+            if (!scope.$schema.config)
+                scope.$schema.config = {};
+        }
+
+        if (!scope.$temp)
+            scope.$temp = {};
+
+        buildControlByType(scope, control, "", parentEl, dataPath, model);
+    }
+
+
+    /**
+     * Generic method - will redirects based on type
+     */
     function buildControlByType(scope, control, key, parentEl, dataPath, model) {
 
         control.interpolateStartSymbol = "{{";
@@ -509,7 +530,9 @@ angular.module('ngViewBuilder', [])
         if (control.compile)
             $compile(panelEl.contents())(scope);
 
-        if (typeof control.afterRender === 'function')
+        if (typeof control.afterRender === 'string')
+            scope.$doPefromAction(null, control.name || control.id, scope, control.afterRender);
+        else if (typeof control.afterRender === 'function')
             control.afterRender(scope, control, panelEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
 
         if (typeof scope.afterRender === 'function')
@@ -534,7 +557,9 @@ angular.module('ngViewBuilder', [])
 
         addAttributes(control, formEl);
 
-        if (typeof control.afterRender === 'function')
+        if (typeof control.afterRender === 'string')
+            scope.$doPefromAction(null, control.name || control.id, scope, control.afterRender);
+        else if (typeof control.afterRender === 'function')
             control.afterRender(scope, control, fromEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
 
         if (typeof scope.afterRender === 'function')
@@ -640,7 +665,9 @@ angular.module('ngViewBuilder', [])
         parentEl.append(fieldEl);
         addAttributes(control, angular.element('#' + control.id, parentEl));
 
-        if (typeof control.afterRender === 'function')
+        if (typeof control.afterRender === 'string')
+            scope.$doPefromAction(null, control.name || control.id, scope, control.afterRender);
+        else if (typeof control.afterRender === 'function') 
             control.afterRender(scope, control, fieldEl, scope.$schema.config[control.name], scope.$schema.options[control.name]);
 
         if (typeof scope.afterRender === 'function')
@@ -732,7 +759,7 @@ angular.module('ngViewBuilder', [])
             el: $event ? $event.target : elementName,
             eventType: action.isInit ? 'init' : 'fetch',
             action: (action.url || ("/api/" + (action.name || actionName))),
-            data: action.requestPath ? scope.model[action.requestPath] : scope.model,
+            data: action.data || (action.requestPath ? scope.model[action.requestPath] : scope.model),
             onComplete: action.onComplete || function (scope, data, ops, hasError) {
                 if (scope.doParseResponse)
                     scope.doParseResponse(data, ops, hasError);
