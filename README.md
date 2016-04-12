@@ -1,18 +1,12 @@
-Complete list of AngularJs Modules
+AngularJs Modules - uiGridWrapper
 =================================
 
-Branch: /ngViewBuilder
-----------------------
-ngViewBuilder is an AngularJs module used for building web application skeleton (Dynamic View and default handlers for REST & DOM events)
+Wrapper on top of ui-gird which supports following features addition to in-built features,
 
-List of built-in core components 
- 1. BootstrapJs
- 2. ngGrid
- 2. LeafLetJS
- 3. Chart.JS and Highcharts
+1. Custom search (Single text search), 
+2. Custom pagination 
+3. Keep selection state across page navigations
+4. Many more events published from core grid - Cell binding, cell class
+5. Row level actions and HTML cells
 
-Branch: /uiGridWrapper
-Wrapper on top of ui-gird which supports custom search, custom pagination and many more events published from core grid.
 
-Branch: /ngHighchartsWrapper
-Yet to push
