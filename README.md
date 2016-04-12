@@ -6,7 +6,9 @@ ngValidator is an Angular module written in generic way to address the form vali
 The idea behind this module (ngValidator) as follows,
 
 • Encourage developers to control when to validate a form element (Example: onBlur or onFoucs or onChange)
+
 • Get rid of tracking multiple flags to show validation messages
+
 • A support to multiple validation rules and a callback / control expression to control execution of rules.
 
 Usage As simple as typical angular module inclusion.
