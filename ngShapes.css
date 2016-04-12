@@ -1,0 +1,102 @@
+.shapes {
+  height: 225px;
+  width: 225px;
+  border: black;
+  border-width: 2px;
+  margin: 20px 10px 20px 10px;
+}
+
+.shapes > .title, .shapes > .title > h1 {
+	font-size: 20px;
+	text-align: center;
+	margin: 0.1em 0;
+}
+
+.shapes .circle {
+  -webkit-transform: rotate(360deg);
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  text-align: center;
+}
+
+.shapes .legend {
+  font-size:75% !important;
+  text-align: left;
+  margin: 0.1em 0;
+  position: absolute;
+  top:0;
+  left: 0;
+  z-index: 1;
+  height: 24px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shapes > .nodata {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: 0.4375rem;
+  margin-left: -4.6875rem;
+  text-align: center;
+  color: #b5b6b7;
+  font-weight: bold;
+}
+
+.circle > .text{
+  padding: 28% 5px 5px 5px;
+	text-align: center;
+  font-size:85% !important;
+}
+
+.slaveone > .text {
+  padding: 42% 5px 5px 5px;
+}
+.slavetwo > .text {
+  padding: 40% 5px 5px 5px;
+}
+.slavethree > .text {
+  padding: 40% 5px 5px 5px;
+}
+.slavefour > .text {
+  padding: 38% 5px 5px 5px;
+}
+.slavefive > .text {
+  padding: 35% 5px 5px 5px;
+}
+
+.master > .text {
+  color: #fff;
+}
+
+.slave > .text {
+  color: #000;
+  font-size:75% !important;
+}
+
+.active .master {
+  background: #0094D2;
+}
+
+.active .slave {
+  background: #B5E9FF;
+}
+
+.master {
+  width: 85px;
+  height: 85px;
+  top: 45px;
+  left: 10px;
+  background: #0094D2;
+}
+
+.slave {
+  width: 75px;
+  height: 75px;
+  top: 25px;
+  left: 10px;
+  background: #E1EDF3;
+}
+
+
