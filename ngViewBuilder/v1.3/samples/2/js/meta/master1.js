@@ -6,8 +6,8 @@
     },
 
     actions: {
-        init1: { isInit: true, processingType: 'ajax', url: '//166.62.16.148/staging/mvc/api/clientmaster/GetClientMasters', type: 'get', responsePath: 'Clients' },
-        search1: { processingType: 'ajax', url: '//166.62.16.148/staging/mvc/api/vesselmaster/GetVesselMastersByFilter', params: { searchText: { path: 'vessel', type: 'model' }, clientId: { path: 'client', subpath:'Id', type: 'model' } }, type: 'get', responsePath: 'Vessels' }
+        init1: { isInit: true, processingType: 'ajax', url: '//127.0.0.1/staging/mvc/api/clientmaster/GetClientMasters', type: 'get', responsePath: 'Clients' },
+        search1: { processingType: 'ajax', url: '//127.0.0.1/staging/mvc/api/vesselmaster/GetVesselMastersByFilter', params: { searchText: { path: 'vessel', type: 'model' }, clientId: { path: 'client', subpath:'Id', type: 'model' } }, type: 'get', responsePath: 'Vessels' }
     },
 
     panels: {

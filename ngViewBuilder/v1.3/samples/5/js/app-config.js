@@ -3,7 +3,7 @@
  * Define your appname and will be used as you app. Note: Any changes you do here will have impact on your app, so please do change in ng-app attribute to make your app run soomthly.
  * Relative library files path from this location
  */
-window.appName = "aruba-monitoring";
+window.appName = "monitoring";
 window.appPath = {
                     base: '',
                     host: location.host,

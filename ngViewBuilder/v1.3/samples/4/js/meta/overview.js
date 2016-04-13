@@ -8,7 +8,7 @@
     actions: {
         task_ap_count: {
             type: 'post',
-            url: 'http://10.29.16.131:9200/_all/_search?pretty',
+            url: 'http://127.0.0.1:9200/_all/_search?pretty',
             resultPath: "['facets']['0']['count']",
             resultModelPath: "ap_count",
             onBefore: function (scope, ops) {
@@ -18,7 +18,7 @@
         },
         task_st_count: {
             type: 'post',
-            url: 'http://10.29.16.131:9200/_all/_search?pretty',
+            url: 'http://127.0.0.1:9200/_all/_search?pretty',
             resultPath: "['facets']['0']['count']",
             resultModelPath: "station_count",
             onBefore: function (scope, ops) {
@@ -28,7 +28,7 @@
         },
         task_app_count: {
             type: 'post',
-            url: 'http://10.29.16.131:9200/_all/_search?pretty',
+            url: 'http://127.0.0.1:9200/_all/_search?pretty',
             resultPath: "['facets']['0']['count']",
             resultModelPath: "app_count",
             onBefore: function (scope, ops) {
@@ -38,7 +38,7 @@
         },
         task_traffic: {
             type: 'post',
-            url: 'http://10.29.16.131:9200/_all/_search?pretty',
+            url: 'http://127.0.0.1:9200/_all/_search?pretty',
             onBefore: function (scope, ops) {
                 ops.data = { "facets": { "0": { "date_histogram": { "key_field": "@timestamp", "value_field": "total_byts", "interval": "5m" }, "global": true, "facet_filter": { "fquery": { "query": { "filtered": { "query": { "query_string": { "query": "SourceType:ArubaVisibilityRec AND NOT app:App_error" } }, "filter": { "bool": { "must": [{ "match_all": {} }] } } } } } } } }, "size": 0 };
                 return true;

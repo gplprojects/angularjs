@@ -6,7 +6,7 @@
     },
 
     actions: {
-        login: { processingType: 'ajax', url: '//166.62.16.148/staging/mvc/api/security/authenticateuser', type: 'get', requestPath: 'loginform' }
+        login: { processingType: 'ajax', url: '//127.0.0.1/staging/mvc/api/security/authenticateuser', type: 'get', requestPath: 'loginform' }
     },
 
     panels: {

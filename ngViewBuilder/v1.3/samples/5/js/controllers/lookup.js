@@ -22,19 +22,19 @@
                 action = {
                     name: 'sourcetypes',
                     type: 'post',
-                    url: 'http://10.29.16.131:9200/_all/_search?pretty=1',
+                    url: 'http://127.0.0.1:9200/_all/_search?pretty=1',
                     data: { "_source": false, "size": 0, "query": { "query_string": { "query": "SourceType:*" } }, "aggs": { "aggForSourceType": { "terms": { "field": "SourceType", "size": 0 } } } }
                 }
-                //getSearchData(1, "post", 'http://10.29.16.131:9200/_all/_search?pretty=1', { "_source": false, "size": 0, "query": { "query_string": { "query": "SourceType:*" } }, "aggs": { "aggForSourceType": { "terms": { "field": "SourceType", "size": 0 } } } });
+                //getSearchData(1, "post", 'http://127.0.0.1:9200/_all/_search?pretty=1', { "_source": false, "size": 0, "query": { "query_string": { "query": "SourceType:*" } }, "aggs": { "aggForSourceType": { "terms": { "field": "SourceType", "size": 0 } } } });
             }
             else if ($event.keyCode == 32) {
                 //To Get Properties of an Index "logstash-2014.12.23"
                 action = {
                     name: 'properties',
                     type: 'get',
-                    url: 'http://10.29.16.131:9200/logstash-2014.12.23/_mapping?pretty=1',
+                    url: 'http://127.0.0.1:9200/logstash-2014.12.23/_mapping?pretty=1',
                 }
-                //getSearchData(2, "get", 'http://10.29.16.131:9200/logstash-2014.12.23/_mapping?pretty=1');
+                //getSearchData(2, "get", 'http://127.0.0.1:9200/logstash-2014.12.23/_mapping?pretty=1');
             }
             else if ($event.keyCode == 13) {
                 $scope.showSuggestion = false;
@@ -45,10 +45,10 @@
                 action = {
                     name: 'lookup',
                     type: 'post',
-                    url: 'http://10.29.16.131:9200/_all/_search?pretty=1',
+                    url: 'http://127.0.0.1:9200/_all/_search?pretty=1',
                     data: { "_source": true, "size": 1, "query": { "query_string": { "query": "SourceType:" + temparr[1] } }, "aggs": { "0": { "terms": { "field": "message.raw", "size": 20 } } } }
                 }
-                //getSearchData(3, "post", 'http://10.29.16.131:9200/_all/_search?pretty=1', parameter);
+                //getSearchData(3, "post", 'http://127.0.0.1:9200/_all/_search?pretty=1', parameter);
             }
 
             if (action) {
@@ -75,7 +75,7 @@
         if (!$scope.model.userQueryText || $scope.model.userQueryText == "" || $scope.model.userQueryText == 'index' || $scope.model.userQueryText == 'index=') {
             action = {
                         type: 'get',
-                        url: 'http://10.29.16.131:9200/_cat/indices?v'
+                        url: 'http://127.0.0.1:9200/_cat/indices?v'
                     }
         } else if($event.keyCode == 32 || $event.keyCode == 186 || $event.keyCode == 187) { //SPACE || ; || =
             //To Do: Build request (i.e., prepare Elasticsearc query from user text)
