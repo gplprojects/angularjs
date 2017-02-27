@@ -1,0 +1,13 @@
+<div class="col-sm-3 col-md-2 sidebar">
+    <ul class="nav nav-sidebar">
+        <li ng-class="{active : (activeMenu == 'list')}" ng-click="activeMenuSection = 'overview'; activeMenu = 'list'"><a ui-sref="list">Overview</a></li>
+    </ul>
+    <ul class="nav nav-sidebar">
+        <li><a ng-click="activeMenuSection = 'configuration';" ui-sref="detail">Configuration</a>
+            <ul class="nav nav-sidebar" ng-if="activeMenuSection == 'configuration'">
+                <li ng-class="{active : (activeMenu == 'detail' && activeMenuSection == 'configuration')}" ng-click="activeMenu = 'detail'"><a  ui-sref="detail">VPN</a></li>
+                <li ng-class="{active : (activeMenu == 'home')}" ng-click="activeMenu = 'home'"><a  ui-sref="home">Routing</a></li>
+            </ul>
+        </li>  
+    </ul>
+</div>

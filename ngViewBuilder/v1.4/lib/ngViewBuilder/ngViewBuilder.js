@@ -1,4 +1,9 @@
 ﻿/**
+ * @license AngularJS View Builder
+ * Author: Murugesan Govindan (murugasen.g@gmail.com)
+ * License: MIT
+ */
+/**
  * A Template based Angular view builder module
  */
 angular.module('ngViewBuilder', [])
@@ -675,9 +680,9 @@ angular.module('ngViewBuilder', [])
 
     //Keep something in global (i.e.,not in $rootScope)
     $scope.meta = {
-        name: "Demo Application",
+        name: "AngularJs View Builder",
         version: '0.1',
-        author: 'Murugesan G',
+        author: 'Murugesan Govindan (murugasen.g@gmail.com)',
         date: 'Jul 2014',
         view: 'Root'
     };
